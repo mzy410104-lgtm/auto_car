@@ -1,20 +1,20 @@
-# 测试记录模板
+# Test Record Template
 
-本文是空白模板，所有未填写项目均未形成测试结论。
+This is a blank template. Unfilled items do not establish any test conclusion.
 
-- 关联任务/Issue：
-- 执行人与时间：
-- 实际投入时间：
-- 测试目标与开始条件：
-- 设备、实物接线与供电来源：
-- 软件/固件提交与实际配置：
-- 仪器与测点：
-- 操作步骤：
-- 预期现象及依据：
-- 原始读数/日志/照片/录像索引：
-- 实际结果与异常：
-- 结论与适用范围：
-- 未解决事项、下一步及负责人：
-- 复核人：
+- Related task / Issue:
+- Operator and date/time:
+- Actual time spent:
+- Test goal and prerequisites:
+- Equipment, physical wiring and supply source:
+- Software/firmware commits and actual configuration:
+- Instruments and measurement points:
+- Procedure:
+- Expected behavior and its basis:
+- Original readings / logs / photographs / video index:
+- Actual results and anomalies:
+- Conclusion and applicable conditions:
+- Unresolved items, next step and owner:
+- Reviewer:
 
-分别标明资料核对、编译、下载、运行、通信和实车功能的证据，不把空载读数或单次成功扩大为整车稳定通过。
+Identify evidence for document checks, compilation, flashing, execution, communication and physical-vehicle functions separately. Do not expand unloaded readings or one successful test into a claim of whole-vehicle stability.

@@ -1,7 +1,7 @@
-# 树莓派软件入口
+# Raspberry Pi Software Entry Point
 
-本目录是本次新定义的车载软件组织位置。目前未导入实际程序，不表示导航或雷达驱动已经运行。
+This directory defines the onboard-software location in the repository. No actual program has been imported; it does not establish that navigation or a lidar driver has run.
 
-负责：B。先记录已有SD卡系统、项目来源、实际依赖与启动方式，保留原环境；从真实代码确定串口、驱动和配置，不默认重装系统或指定版本。
+Owner: B. First record the existing SD-card system, project source, actual dependencies and startup procedure, preserving the original environment. Determine serial ports, drivers and configuration from real code; do not assume a system reinstall or prescribe a version.
 
-与STM32通信的约定保存在[接口约定](../interfaces/CONTROL_INTERFACE.md)。真实扫描、联调和导航结果以[测试记录](../tests/records/README.md)索引。
+Store STM32 communication agreements in the [interface agreement](../interfaces/CONTROL_INTERFACE.md). Index real scan, integration and navigation results in [test records](../tests/records/README.md).

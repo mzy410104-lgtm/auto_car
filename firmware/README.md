@@ -1,7 +1,7 @@
-# STM32工程入口
+# STM32 Project Entry Point
 
-本目录是本次新定义的固件组织位置。目前未导入实际工程，不能视为已有可编译/可烧写程序。
+This directory defines the firmware location in the repository. No actual project has been imported, so it does not establish an available buildable or flashable program.
 
-负责：C。导入时记录现有工程来源、目标NUCLEO-F103RB板卡、工具链、构建与下载方式，以及原程序恢复依据。引脚、时钟、外设及通信参数从实际工程和板卡资料取得。
+Owner: C. On import, record the existing project's source, target NUCLEO-F103RB board, toolchain, build/flashing methods and basis for restoring the original program. Obtain pins, clocks, peripherals and communication parameters from the actual project and board documentation.
 
-生成文件忽略规则在真实构建目录确认后添加；接口变更同步到[接口约定](../interfaces/CONTROL_INTERFACE.md)，实测结果写入[测试记录](../tests/records/README.md)。
+Add generated-file ignore rules once the real build directories are confirmed. Update the [interface agreement](../interfaces/CONTROL_INTERFACE.md) when interfaces change, and save measured results in [test records](../tests/records/README.md).

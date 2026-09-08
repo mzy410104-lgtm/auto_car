@@ -1,30 +1,30 @@
 ---
-name: 项目任务
-about: 记录目标、责任、依赖与实际完成证据
+name: Project task
+about: Record the goal, ownership, dependencies and actual completion evidence
 title: ''
 labels: ''
 assignees: ''
 ---
 
-## 目标与关联计划
+## Goal and related plan
 
-填写具体目标、计划任务编号和本地任务编号（如适用）。
+Enter the specific goal, plan task identifiers and local task identifier, if applicable.
 
-## 负责人和投入
+## Owner and effort
 
-填写实际负责人、参与者、预计投入及实际已用时间。未确认账号时不猜测分配。
+Enter the actual owner, participants, estimated effort and actual time spent. Do not assign accounts that have not been confirmed.
 
-## 前置条件
+## Prerequisites
 
-说明设备、供电、资料、接口及其他任务依赖。
+Describe equipment, power, documentation, interfaces and other task dependencies.
 
-## 完成证据
+## Completion evidence
 
-- [ ] 已明确本任务的完成条件
-- [ ] 已附实际文件/日志/数据或缺少条件
-- [ ] 已区分文件修改、软件检查与硬件实测
-- [ ] 已记录结论、适用范围及下一步
+- [ ] The task's completion criteria are defined
+- [ ] Actual files/logs/data or missing prerequisites are attached
+- [ ] File changes, software checks and measured hardware tests are distinguished
+- [ ] The conclusion, applicable conditions and next step are recorded
 
-## 当前结果
+## Current result
 
-填写实际状态；尚未收到结果写待补证据，不能直接认定未做。
+Enter the actual status. When results have not been received, use pending evidence rather than assuming the work has not been done.

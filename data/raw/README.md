@@ -1,5 +1,5 @@
-# 大型原始数据
+# Large Raw Data
 
-本目录预留给本地雷达录制、长视频等大型原始文件。Git默认只追踪本说明，未保存新的录制数据。
+This directory is reserved for large local files such as lidar recordings and long videos. Git tracks only this README by default. No new recordings have been saved here.
 
-使用实际团队共享存储后，在tests/records中记录原始文件名、采集条件、大小、校验信息和可访问位置。共享地址与权限按实际设置填写，不提交访问令牌。
+Once actual team-shared storage is in use, record the original filename, acquisition conditions, size, checksum information and accessible location in tests/records. Enter the actual sharing URL and permissions; do not commit access tokens.

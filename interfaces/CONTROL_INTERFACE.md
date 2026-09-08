@@ -1,15 +1,15 @@
-# Pi与STM32接口约定
+# Pi–STM32 Interface Agreement
 
-这是本次新增的待填写接口文档，不是已经实现的协议。B/C在读取实际接线和工程后共同填写。
+This is an interface document awaiting completion, not an implemented protocol. B/C will complete it together after inspecting the actual wiring and projects.
 
-| 项目 | 当前值/状态 | 依据或责任 |
+| Item | Current value / status | Source or responsibility |
 |---|---|---|
-| 物理连接与接口路由 | 待填写 | 实物、板卡手册与现有工程 |
-| 引脚、供电、电平及公共地 | 待填写 | 实际接线核对 |
-| 通信参数及消息格式 | 待双方确定 | 已有实现优先读取，无实现时明确设计后再写代码 |
-| 目标速度与转向的单位/方向 | 待双方确定 | 控制与导航共同约定 |
-| 停车、超时、错误与恢复行为 | 待双方确定 | 项目控制要求与实测 |
-| 测速、姿态、距离及状态反馈 | 待双方确定 | 真实传感器输出与数据含义 |
-| 对应固件/主机版本与测试记录 | 待填写 | 两端实际提交和联调记录 |
+| Physical connection and interface routing | To be recorded | Physical hardware, board manual and existing project |
+| Pins, power, signal levels and common ground | To be recorded | Actual wiring verification |
+| Communication parameters and message format | To be agreed by both sides | Read an existing implementation first; if none exists, explicitly define the design before coding |
+| Units and direction conventions for target speed and steering | To be agreed by both sides | Joint control/navigation agreement |
+| Stop, timeout, error and recovery behavior | To be agreed by both sides | Project control requirements and measured tests |
+| Speed, orientation, distance and status feedback | To be agreed by both sides | Actual sensor outputs and their meaning |
+| Corresponding firmware/host versions and test records | To be recorded | Actual commits and integration records from both sides |
 
-单叉实测速度大小与控制状态推定方向分开表达；此处不预设JSON键名、数据帧字段或串口标识符。
+Express speed magnitude measured by the single photointerrupter separately from direction inferred from control state. No JSON keys, frame fields or serial-port identifiers are prescribed here.

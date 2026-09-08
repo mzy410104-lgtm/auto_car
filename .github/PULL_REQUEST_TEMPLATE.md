@@ -1,20 +1,20 @@
-## 改变了什么，解决什么问题
+## What changed and which problem it addresses
 
-## 关联任务
+## Related task
 
-填写真实Issue链接/编号及计划任务编号。硬件证据未满足时不使用自动关闭语句。
+Enter the actual Issue link/number and plan task identifiers. Do not use automatic closing keywords when hardware evidence is still missing.
 
-## 验证结果
+## Verification results
 
-分别写明文档检查、编译、下载、运行、通信和实测；未执行的部分明确注明。
+State documentation checks, compilation, flashing, execution, communication and measured tests separately. Explicitly identify any checks not performed.
 
-## 影响与待解决事项
+## Impact and unresolved items
 
-说明接线、接口、依赖、操作步骤的变化及实际限制。
+Describe changes to wiring, interfaces, dependencies or procedures, together with actual limitations.
 
-## 复核
+## Review
 
-- [ ] 仅包含本任务的文件变化
-- [ ] 接口/配置值有实际来源
-- [ ] 测试结论与证据对应
-- [ ] 另一位成员已复核，或明确仍待复核
+- [ ] The changes contain only files belonging to this task
+- [ ] Interface/configuration values have actual sources
+- [ ] Test conclusions correspond to the evidence
+- [ ] Another member has reviewed the change, or review is explicitly still pending

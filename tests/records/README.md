@@ -1,5 +1,5 @@
-# 测试记录
+# Test Records
 
-本目录保存小型测试记录和证据索引，目前只有[空白模板](TEMPLATE.md)，没有新增硬件实测结果。
+This directory stores small test records and evidence indexes. It currently contains only a [blank template](TEMPLATE.md), with no new measured hardware results.
 
-为一次实际测试建立独立Markdown记录，名称由本次测试明确填写。附可追溯的源码提交、接线/供电条件、实际数据与结论。短小日志和已核对可公开的图片可随记录提交，大型原始文件按[data/raw说明](../../data/raw/README.md)保存索引。
+Create a separate Markdown record for each actual test and explicitly choose its filename. Include traceable source commits, wiring/power conditions, actual data and conclusions. Small logs and images checked for public sharing may be committed with the record. Index large raw files according to the [data/raw instructions](../../data/raw/README.md).

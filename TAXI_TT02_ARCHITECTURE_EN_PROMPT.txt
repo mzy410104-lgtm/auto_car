@@ -1,0 +1,56 @@
+Use case: text-localization.
+Edit target: the supplied completed TT-02 architecture diagram. Produce a fully English version for the same engineering project. Preserve all boxes, arrows, arrowheads, exact connectivity, colors, line styles, layout, models, quantities and numeric specifications. Translate text only; shrink text slightly or wrap within boxes where needed. Every existing French label must be replaced by English. Keep output high resolution and all text legible.
+
+Exact English content:
+Title: AUTONOMOUS TAXI — COMPLETED ARCHITECTURE
+Subtitle: TT-02 · Indoor navigation without floor markings
+Section 1: INFORMATION, CONTROL AND FEEDBACK
+PC: Destination · monitoring
+Wi-Fi: destination / status
+Raspberry Pi 4 Model B: Map · localization · planning / Path following · obstacle avoidance
+RPLIDAR A2M8 → Compatible USB adapter → Scans / USB → Pi
+Pi downlink: Target speed · target steering angle · run / stop
+Pi–STM32 annotation: Bidirectional UART: physical interface to be verified
+STM32 uplink: Measured speed · IMU · IR distances · status
+NUCLEO-F103RB — LOW-LEVEL CONTROL
+Inside controller, top: Manual / automatic selection
+middle: Stop on nearby obstacle, fault or active-command timeout
+bottom: Speed measurement · speed PID · steering control
+priority line: Stop priority > manual > automatic
+CARSON transmitter → Radio → CARSON REFLEX WHEEL PRO 3 receiver → Manual commands · acquisition to be defined → STM32
+STM32 right upper output: RC pulses: propulsion → TAMIYA TBLE-04S ESC → Motor power → Drive motor
+Drive motor dashed down: TT-02 transmission → Perforated gear + dedicated cover → Apertures pass through beam → OPTEK OPB815WZ ×1
+OPB815WZ solid blue left: Optical interface; LED current limiting · output conditioning. Subboxes: LED: current limiting; Detector: output conditioning.
+Optical interface → Pulses → timer → STM32 bottom
+Measurement: speed magnitude.
+Direction: inferred from control state, not measured by the single photointerrupter.
+DFRobot SEN0253 IMU → I²C → STM32 bottom
+SHARP GP2Y0A21YK0F ×2 → Analog input conditioning → ADC → STM32 bottom
+Bottom left note: Radio input and manual/auto switching must be implemented and tested.
+Takeover via STM32 does not cover an STM32 failure.
+
+Section 2: POWER SUPPLY
+NiMH battery / 7.2 V nominal → MAIN SWITCH
+Below main switch: Purpose confirmed: disconnect vehicle battery power
+Main switch splits above branches: Propulsion branch; Electronics branch
+Propulsion branch → TBLE-04S battery input
+TBLE-04S battery input separate paths: Motor output (to drive motor); TBLE-04S BEC / 6 V / 1.5 A: manufacturer specification
+BEC dashed output → Receiver + servo / Compatibility and current to be verified
+Electronics branch → Distribution + regulation / Existing module: LM2596S / Voltage, current and performance under load to be validated
+Regulation three separate outputs:
+Pi 4: suitable USB-C power supply
+NUCLEO: board power input to be verified
+Sensors + interfaces: supply rails matching datasheets
+Pi reference box: Pi 4 reference: 5.1 V / 3 A / Do not infer module capability from its name.
+Dashed down from Pi power: USB power budget to be verified
+A2M8 + adapter: USB supply to be verified
+GND: common reference for wired signals / Do not connect two power-supply outputs in parallel.
+
+Legend:
+Blue: data; Green: control; Red: supply / power; Dashed gray: mechanical / optical connection
+Data, control and power are shown separately.
+A repeated block represents the same hardware.
+Footer: Proposed architecture · Wiring, compatibility and operation must be verified on the vehicle.
+
+CRITICAL INVARIANTS:
+All connections stay identical to the reference. Both I²C IMU and conditioned ADC connect into STM32, not each other. Lidar USB enters Pi, never STM32. UART separate arrows down and up. Green RC propulsion line goes STM32 to ESC; red motor power goes ESC to drive motor. Optical interface blue arrow terminates at STM32 timer. Main battery switch stays before both branches. ESC has separate motor power output and BEC6V output. No BEC connection to Pi. Do not add or remove lines or components; do not invent specs.

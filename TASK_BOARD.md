@@ -1,82 +1,82 @@
-# Taxi autonome：本地任务看板
+# Autonomous Taxi: Local Task Board
 
-建立日期：2026-09-08。依据：[本轮工作计划](CURRENT_WEEK_TASKS_ZH.md)第8节的六项交付。
+Created: 2026-09-08. Basis: the six deliverables in Section 8 of the [current work cycle plan](CURRENT_WEEK_TASKS_EN.md).
 
-`LOCAL-001`至`LOCAL-006`是本文件定义的本地任务编号，**不是远程Issue编号**。已在[mzy410104-lgtm/auto_car](https://github.com/mzy410104-lgtm/auto_car)建立对应Issue，映射见下表。A/B/C沿用计划中的职责标签，尚未对应实际姓名或平台账号。GitHub Projects看板尚未配置。
+`LOCAL-001` through `LOCAL-006` are local task IDs defined in this file, **not remote issue numbers**. Corresponding issues have been created in [mzy410104-lgtm/auto_car](https://github.com/mzy410104-lgtm/auto_car); the mapping is shown below. A/B/C retain the responsibility labels from the plan and have not yet been assigned to actual names or platform accounts. A GitHub Projects board has not yet been configured.
 
-六项初始状态均为**待补证据**：目前尚未收到对应结果，不据此认定团队未做过任务。先核销已有结果，再安排实际工作。
+All six initial statuses are **pending evidence**: the corresponding results have not yet been received. This does not establish that the team has never performed the tasks. Credit existing results first, then schedule actual work.
 
-## 使用规则
+## Usage Rules
 
-- 建议工作流列名为：**待补证据、条件待落实、进行中、待复核、已完成**。这是本组工作流建议，不是已经创建的平台配置；更新时依据实际进展选择，不能把所有“待补证据”自动改为“未开始”。
-- **Git提交不等于硬件测试通过。**文档、源码、编译、下载、实际运行、硬件功能分别保留证据。提交记录可以说明文件变更，不能代替电压读数、实车视频或两端通信日志。
-- 完成判定沿用现有计划：记录实际接线、供电、软件/工程位置、操作、结果、原始证据、实际耗时与未解决事项；失败和条件不足也必须如实记录。文件写完不自动满足硬件完成条件。
-- 本看板不追加工时。AB、AC、BC及B3/C2的联合讨论仍按原计划计入参与者；多个交付引用同一交接任务时不重复计算时间。
-- 单车改线、固定扫描和车辆动作窗口分开。Pi与NUCLEO通信联调时共同预留；只有实际隔离并具备已核验独立供电的单板才能并行上电。
-- 任务之间按下列具体前置推进，不要求相关任务全部关闭后才能开展独立准备。已有合格台式供电的单机结果与车载供电结果分别登记。
+- Suggested workflow columns: **Pending evidence, Prerequisites pending, In progress, Awaiting review, Completed**. This is a proposed team workflow, not platform configuration that has already been created. Select a status based on actual progress; do not automatically change every "Pending evidence" item to "Not started."
+- **A Git commit does not mean a hardware test has passed.** Retain separate evidence for documentation, source code, compilation, flashing, actual operation, and hardware functionality. Commit records can establish file changes, but cannot replace voltage readings, real-vehicle video, or communication logs from both ends.
+- Retain the completion criteria in the existing plan: record actual wiring, power, software/project locations, actions, results, raw evidence, actual time spent, and unresolved matters. Record failures and unmet prerequisites truthfully as well. Finishing a document does not automatically satisfy hardware completion criteria.
+- This board adds no working hours. AB, AC, BC, and the joint B3/C2 discussion remain included in participants' time under the original plan. Do not count time again when multiple deliverables reference the same handover task.
+- Separate rewiring, stationary scanning, and vehicle movement windows for the single vehicle. Reserve Pi and NUCLEO together for communication integration tests. Only boards that are actually isolated and have verified independent power may be powered in parallel.
+- Advance tasks according to the specific prerequisites below; independent preparation does not require every related task to be closed first. Record standalone results using verified bench power separately from onboard-power results.
 
-## 初始任务总览
+## Initial Task Overview
 
-| 本地编号 | GitHub Issue | 交付 | 负责人 | 当前状态 |
+| Local ID | GitHub Issue | Deliverable | Owner | Current status |
 |---|---|---|---|---|
-| LOCAL-001 | [#1](https://github.com/mzy410104-lgtm/auto_car/issues/1) | 需求与资源记录 | A/B/C | 待补证据 |
-| LOCAL-002 | [#2](https://github.com/mzy410104-lgtm/auto_car/issues/2) | 供电记录 | A/B | 待补证据 |
-| LOCAL-003 | [#3](https://github.com/mzy410104-lgtm/auto_car/issues/3) | 原遥控与停止 | A/C | 待补证据 |
-| LOCAL-004 | [#4](https://github.com/mzy410104-lgtm/auto_car/issues/4) | Pi与雷达复现资料 | B | 待补证据 |
-| LOCAL-005 | [#5](https://github.com/mzy410104-lgtm/auto_car/issues/5) | STM32与通信资料 | C/B | 待补证据 |
-| LOCAL-006 | [#6](https://github.com/mzy410104-lgtm/auto_car/issues/6) | 测速件获取安排 | A | 待补证据 |
+| LOCAL-001 | [#1](https://github.com/mzy410104-lgtm/auto_car/issues/1) | Requirements and resource record | A/B/C | Pending evidence |
+| LOCAL-002 | [#2](https://github.com/mzy410104-lgtm/auto_car/issues/2) | Power record | A/B | Pending evidence |
+| LOCAL-003 | [#3](https://github.com/mzy410104-lgtm/auto_car/issues/3) | Original radio control and stopping | A/C | Pending evidence |
+| LOCAL-004 | [#4](https://github.com/mzy410104-lgtm/auto_car/issues/4) | Pi and lidar reproduction material | B | Pending evidence |
+| LOCAL-005 | [#5](https://github.com/mzy410104-lgtm/auto_car/issues/5) | STM32 and communication material | C/B | Pending evidence |
+| LOCAL-006 | [#6](https://github.com/mzy410104-lgtm/auto_car/issues/6) | Speed-sensing component acquisition arrangements | A | Pending evidence |
 
-## LOCAL-001：需求与资源记录
+## LOCAL-001: Requirements and Resource Record
 
-- **负责人：**A/B/C。
-- **状态：**待补证据。
-- **关联计划：**第3节“共同开始”和第9节“共同复盘”。这两项在现有计划中没有独立任务编号，本看板不为其补造旧编号。
-- **完成证据：**已有测试结果及证据核销；每人实际已用和剩余时间；仪器、场地、单车/Pi/NUCLEO的可用及交接安排；目的地、初始化、到站、停车/绕行、课程要求和截止日的已确认内容或未定事项负责人；复盘中的下一项动作。
-- **依赖：**组员提供实际状态和记录。未定事项可保留并指定下一步；共同讨论不代替尚未执行的场地测量，不编造日期和指标。
+- **Owner:** A/B/C.
+- **Status:** Pending evidence.
+- **Related plan sections:** Section 3, "Joint Kickoff," and Section 9, "Joint Review." Neither has a separate task ID in the existing plan; this board does not invent retrospective IDs for them.
+- **Completion evidence:** Review and credit for existing test results and evidence; each person's actual time spent and remaining; availability and handover arrangements for instruments, the room, and the single vehicle/Pi/NUCLEO; confirmed destination, initialization, arrival, stopping/detouring, course requirements, and deadline information, or owners of unresolved items; the next action identified during review.
+- **Dependencies:** Team members provide actual status and records. Unresolved items may remain open with a next action assigned. Joint discussion does not replace room measurements that have not yet been performed; do not invent dates or criteria.
 
-## LOCAL-002：供电记录
+## LOCAL-002: Power Record
 
-- **负责人：**A/B。
-- **状态：**待补证据。
-- **关联计划编号：**A1、A2、A3、AB、A5。
-- **完成证据：**实际接线照片和版本、被测支路与隔离方式、供电条件依据、仪器及测点；电池和LM2596S空载输入/输出、关断读数；逐级带载的负载状态、供电来源、实际电压及程序表现；未核验支路和交接记录。空载、关断、带载各自登记结果。
-- **依赖：**先落实LOCAL-001中的设备使用安排。A1断电追线独占车辆；A2的供电依据和仪器条件成立后才做A3。AB须具备空载目标和B的已核验单机条件，与LOCAL-004交接负载及运行状态；每次改线前断电。
-- **条件不足时：**保存追线、资料和仪器借用安排，测量仍待执行；空载读数不证明带载稳定，也不证明模块持续输出能力。
+- **Owner:** A/B.
+- **Status:** Pending evidence.
+- **Related plan IDs:** A1, A2, A3, AB, A5.
+- **Completion evidence:** Actual wiring photos and version, branches under test and isolation methods, basis for power conditions, instruments, and measurement points; battery readings and LM2596S no-load input/output and switch-off readings; load state, power source, actual voltage, and software behavior during progressive loading; unverified branches and handover records. Record no-load, switch-off, and loaded results separately.
+- **Dependencies:** First establish the equipment-use arrangements in LOCAL-001. A1 requires exclusive use of the vehicle to trace wiring with power disconnected. Perform A3 only after A2's power requirements and instrument prerequisites are established. AB requires no-load targets and B's verified standalone conditions; coordinate load and operating-status handover with LOCAL-004. Disconnect power before every wiring change.
+- **If prerequisites are missing:** Preserve wiring-trace records, documentation, and instrument-borrowing arrangements; measurements remain pending. No-load readings do not prove loaded stability or the module's continuous output capability.
 
-## LOCAL-003：原遥控与停止
+## LOCAL-003: Original Radio Control and Stopping
 
-- **负责人：**A/C。
-- **状态：**待补证据。
-- **关联计划编号：**AC、A5、C5。
-- **完成证据：**实际配套和接线依据、中位、基本动作与停车记录；隔离执行动作时的失联输出、停止与恢复依据；条件成立后的受控悬空动作及失联/恢复记录；实际通过范围和未解决项。
-- **依赖：**相关供电、操作及仪器条件已落实，完成LOCAL-002对应支路的交接；不要求其他无关支路先全部完成。AC使用车辆期间，B停止车上扫描和接线；先隔离执行动作检查失联输出，明确后再做悬空验证。接收机与STM32输出保持分离。
-- **条件不足时：**仅登记实际验证范围，停止未通过不进入地面测试。本项不代表自动接管已完成。
+- **Owner:** A/C.
+- **Status:** Pending evidence.
+- **Related plan IDs:** AC, A5, C5.
+- **Completion evidence:** Basis for the actual paired equipment and wiring; neutral, basic movement, and stopping records; signal-loss outputs with actuator movement isolated, and the basis for stopping/recovery; controlled movement with the wheels raised and signal-loss/recovery records once prerequisites are established; actual scope passed and unresolved items.
+- **Dependencies:** Relevant power, operating, and instrument prerequisites established, and handover of the corresponding LOCAL-002 branches complete. Unrelated branches do not all need to be completed first. While AC uses the vehicle, B stops onboard scanning and wiring. First check signal-loss outputs with actuator movement isolated; once behavior is clear, proceed to checks with the wheels raised. Keep receiver and STM32 outputs separate.
+- **If prerequisites are missing:** Record only the actual verified scope. Do not begin floor tests before stopping has passed. This item does not establish completion of automatic takeover.
 
-## LOCAL-004：Pi与雷达复现资料
+## LOCAL-004: Pi and Lidar Reproduction Material
 
-- **负责人：**B。
-- **状态：**待补证据。
-- **关联计划编号：**B1、B2、B4；AB中的供电联合记录同时归入LOCAL-002，不另计工时。
-- **完成证据：**已有系统、软件和工程的实际位置；A2M8适配器及实际连接；真实扫描数据、纸板变化对应录像、实际持续时长与异常；停止后再次采集的结果及复现说明；明确台式或车载供电条件。
-- **依赖：**A完成相关断电追线并交接Pi，单机供电已核验；B2期间车体固定，不安排车辆动作、机械拆装或同车改线。车载供电尚未通过时，可在已核验且实际隔离的台式供电条件下先测单机。
-- **条件不足时：**记录停在供电、适配器、识别或采集的实际环节；保留已有SD卡，不默认重刷。系统识别、仿真数据或一次采集不替代相应复现证据。
+- **Owner:** B.
+- **Status:** Pending evidence.
+- **Related plan IDs:** B1, B2, B4. Joint power records from AB also belong to LOCAL-002, without adding working hours.
+- **Completion evidence:** Actual locations of the existing system, software, and projects; A2M8 adapter and actual connections; real scan data, video showing the response to cardboard movement, actual duration, and anomalies; results and reproduction instructions for acquisition restarted after stopping; explicit bench or onboard power conditions.
+- **Dependencies:** A has completed the relevant wiring tracing with power disconnected and handed over Pi; standalone power is verified. Secure the vehicle during B2, with no vehicle movement, mechanical disassembly/assembly, or rewiring of the same vehicle. If onboard power has not yet passed, standalone tests may first use verified, physically isolated bench power.
+- **If prerequisites are missing:** Record the actual point at which work stopped: power, adapter, detection, or acquisition. Preserve the existing SD card and do not reimage by default. System detection, simulated data, or a single acquisition does not replace the required reproduction evidence.
 
-## LOCAL-005：STM32与通信资料
+## LOCAL-005: STM32 and Communication Material
 
-- **负责人：**C/B。
-- **状态：**待补证据。
-- **关联计划编号：**C1、C2、C3、B3、BC、C5、B4。
-- **完成证据：**原工程/固件及恢复依据、实物供电与接口记录；双方同一份接口约定及实际参数来源；最小程序、编译、下载、运行与重启记录；两端对应的发送/接收数据、断开、超时及恢复日志；工程和复现资料的实际保存位置。
-- **依赖：**A完成相关断电记录并交接NUCLEO；单板供电和接口成立。C2与B3中的0.5小时为同一场讨论，约定先于两端实现完成；C3烧写前须落实恢复及下载条件。B3/C3就绪且连接、电平、供电核验后进入BC，专场占用唯一的Pi与NUCLEO并隔离执行器。
-- **条件不足时：**原固件恢复依据不足则保留原程序，只推进允许的检查和准备，不擦除或解锁。编译、下载、运行、单向、双向分别判定，主机自检不能登记为双机通信通过。
+- **Owner:** C/B.
+- **Status:** Pending evidence.
+- **Related plan IDs:** C1, C2, C3, B3, BC, C5, B4.
+- **Completion evidence:** Original project/firmware and recovery information; actual hardware power and interface records; one shared interface agreement and sources for actual parameters; minimal program, compilation, flashing, operation, and restart records; matching sent/received data from both ends and disconnection, timeout, and recovery logs; actual storage locations for the project and reproduction material.
+- **Dependencies:** A has completed the relevant records with power disconnected and handed over NUCLEO; standalone power and interface prerequisites are established. C2 and the 0.5 hour within B3 are the same discussion; agreement must precede completion of both implementations. Establish recovery and flashing prerequisites before flashing in C3. Enter BC once B3/C3 are ready and connections, voltage levels, and power have been verified; reserve the only Pi and NUCLEO for the session and isolate actuators.
+- **If prerequisites are missing:** If the original firmware's recovery information is insufficient, preserve the original program and advance only permitted checks and preparation; do not erase or unlock it. Assess compilation, flashing, operation, one-way communication, and bidirectional communication separately. A host self-test cannot be recorded as passed communication between the two devices.
 
-## LOCAL-006：测速件获取安排
+## LOCAL-006: Speed-Sensing Component Acquisition Arrangements
 
-- **负责人：**A。
-- **状态：**待补证据。
-- **关联计划编号：**A4、A5。
-- **完成证据：**开孔传动齿轮、专用罩、OPB815WZ各1件/只的需求及官方资料/安装记录；由组员提交供应方或工坊的实际记录；已收到的回复、报价、交期及包含内容；无回复时的等待状态与跟进人；实际获取状态交接。
-- **依赖：**使用现有官方文件及实际安装记录。材料整理和提交可与不占用车辆的任务并行；需要查看或拍摄实车时先协调使用窗口，不在固定扫描或动作期间拆装。
-- **条件不足时：**等待回复、未下单、未到货、未安装分别登记；本轮不以到货或完成真实测速为前置。不恢复轴孔、双叉方案，不增加双目采购。
+- **Owner:** A.
+- **Status:** Pending evidence.
+- **Related plan IDs:** A4, A5.
+- **Completion evidence:** Requirements and official documents/installation records for one perforated transmission gear, one dedicated gear cover, and one OPB815WZ photointerrupter; actual records of a team member submitting requirements to the supplier or workshop; replies, quotations, lead times, and included items actually received; waiting status and the person following up when no reply has arrived; handover of actual acquisition status.
+- **Dependencies:** Use existing official documents and actual installation records. Document preparation and submission may run in parallel with tasks that do not occupy the vehicle. Coordinate a vehicle-use window before inspecting or photographing the real vehicle; do not disassemble it during stationary scanning or movement.
+- **If prerequisites are missing:** Record awaiting reply, not ordered, not delivered, and not installed separately. This work cycle does not require delivery or completed real speed measurement as a prerequisite. Do not return to the shaft-hole or dual-photointerrupter designs, and do not add stereo-camera procurement.
 
-本文件与六条GitHub Issue已建立。六项硬件或实施结果尚未由此确认；后续日常进展以Issue为准，本文件保留任务范围、完成条件与链接，避免两处重复维护状态。
+This file and the six GitHub issues have been created. This does not verify the six hardware or implementation outcomes. Use the issues as the source of day-to-day progress from now on; this file retains task scope, completion criteria, and links to avoid maintaining status in two places.
