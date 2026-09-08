@@ -2,7 +2,7 @@
 
 Created: 2026-09-08. Basis: the six deliverables in Section 8 of the [current work cycle plan](CURRENT_WEEK_TASKS_EN.md).
 
-`LOCAL-001` through `LOCAL-006` are local task IDs defined in this file, **not remote issue numbers**. Corresponding issues have been created in [mzy410104-lgtm/auto_car](https://github.com/mzy410104-lgtm/auto_car); the mapping is shown below. A/B/C retain the responsibility labels from the plan and have not yet been assigned to actual names or platform accounts. A GitHub Projects board has not yet been configured.
+`LOCAL-001` through `LOCAL-006` are local task IDs defined in this file, **not remote issue numbers**. Corresponding issues have been created in [mzy410104-lgtm/auto_car](https://github.com/mzy410104-lgtm/auto_car); the mapping is shown below. C is the repository owner, [mzy410104-lgtm](https://github.com/mzy410104-lgtm), who confirmed responsibility for STM32. A/B members and their GitHub accounts remain to be confirmed. A GitHub Projects board has not yet been configured.
 
 All six initial statuses are **pending evidence**: the corresponding results have not yet been received. This does not establish that the team has never performed the tasks. Credit existing results first, then schedule actual work.
 
@@ -28,7 +28,7 @@ All six initial statuses are **pending evidence**: the corresponding results hav
 
 ## LOCAL-001: Requirements and Resource Record
 
-- **Owner:** A/B/C.
+- **Owner:** A/B/C; C is [mzy410104-lgtm](https://github.com/mzy410104-lgtm). A/B members remain to be confirmed.
 - **Status:** Pending evidence.
 - **Related plan sections:** Section 3, "Joint Kickoff," and Section 9, "Joint Review." Neither has a separate task ID in the existing plan; this board does not invent retrospective IDs for them.
 - **Completion evidence:** Review and credit for existing test results and evidence; each person's actual time spent and remaining; availability and handover arrangements for instruments, the room, and the single vehicle/Pi/NUCLEO; confirmed destination, initialization, arrival, stopping/detouring, course requirements, and deadline information, or owners of unresolved items; the next action identified during review.
@@ -45,7 +45,7 @@ All six initial statuses are **pending evidence**: the corresponding results hav
 
 ## LOCAL-003: Original Radio Control and Stopping
 
-- **Owner:** A/C.
+- **Owner:** A/C; C is [mzy410104-lgtm](https://github.com/mzy410104-lgtm). The A member remains to be confirmed.
 - **Status:** Pending evidence.
 - **Related plan IDs:** AC, A5, C5.
 - **Completion evidence:** Basis for the actual paired equipment and wiring; neutral, basic movement, and stopping records; signal-loss outputs with actuator movement isolated, and the basis for stopping/recovery; controlled movement with the wheels raised and signal-loss/recovery records once prerequisites are established; actual scope passed and unresolved items.
@@ -63,10 +63,11 @@ All six initial statuses are **pending evidence**: the corresponding results hav
 
 ## LOCAL-005: STM32 and Communication Material
 
-- **Owner:** C/B.
+- **Owner:** C, [mzy410104-lgtm](https://github.com/mzy410104-lgtm), for STM32; B for the Pi endpoint and joint communication work. The B member remains to be confirmed.
 - **Status:** Pending evidence.
 - **Related plan IDs:** C1, C2, C3, B3, BC, C5, B4.
-- **Completion evidence:** Original project/firmware and recovery information; actual hardware power and interface records; one shared interface agreement and sources for actual parameters; minimal program, compilation, flashing, operation, and restart records; matching sent/received data from both ends and disconnection, timeout, and recovery logs; actual storage locations for the project and reproduction material.
+- **Starting point:** C confirmed that no STM32 project has been created yet. Record actual development tools and the physical board's existing firmware state, then create the first minimal NUCLEO-F103RB project. No source project does not mean the board is blank.
+- **Completion evidence:** Development-tool versions and board firmware/recovery information; actual hardware power and interface records; one shared interface agreement and sources for actual parameters; the newly created minimal project, compilation, flashing, operation, and restart records; matching sent/received data from both ends and disconnection, timeout, and recovery logs; actual storage locations for the project and reproduction material.
 - **Dependencies:** A has completed the relevant records with power disconnected and handed over NUCLEO; standalone power and interface prerequisites are established. C2 and the 0.5 hour within B3 are the same discussion; agreement must precede completion of both implementations. Establish recovery and flashing prerequisites before flashing in C3. Enter BC once B3/C3 are ready and connections, voltage levels, and power have been verified; reserve the only Pi and NUCLEO for the session and isolate actuators.
 - **If prerequisites are missing:** If the original firmware's recovery information is insufficient, preserve the original program and advance only permitted checks and preparation; do not erase or unlock it. Assess compilation, flashing, operation, one-way communication, and bidirectional communication separately. A host self-test cannot be recorded as passed communication between the two devices.
 

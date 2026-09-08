@@ -11,7 +11,7 @@ Git records file versions. GitHub provides a shared repository, Issues, Pull Req
 5. Open a Pull Request describing what changed, why, what has been verified and the related Issue. Have another teammate review it.
 6. After merging, update the task according to actual completion evidence. A commit or merged PR does not automatically establish that a hardware task has passed.
 
-GitHub accounts have not yet been mapped to A/B/C; role labels cannot be used to assign unconfirmed accounts. Maintain task status according to the team's rules. Status names in repository files do not mean matching GitHub Projects fields have been configured.
+C is the repository owner, [mzy410104-lgtm](https://github.com/mzy410104-lgtm), who confirmed responsibility for STM32. A/B members and accounts remain to be confirmed; do not assign unconfirmed accounts. Maintain task status according to the team's rules. Status names in repository files do not mean matching GitHub Projects fields have been configured.
 
 ## 2. Daily operations
 
@@ -78,7 +78,7 @@ Use the [test-record template](tests/records/TEMPLATE.md). Record the commit, ac
 3. Each member selects a defined task, submits a small change and reviews another member's work. Do not modify another person's local working directory.
 4. At the weekly review, update Issues with actual time spent, results, blockers and next steps; retain the overall arrangements in the work-plan documents.
 
-The current decision is not to invite collaborators yet. No invitations have been sent and no GitHub accounts have been assigned to A/B/C. Confirm exact accounts when team collaboration begins. After the initial import, changes to main are recommended through PRs. This is a team convention; server-side branch protection requires separate verification.
+The current decision is not to invite collaborators yet. No invitations have been sent. C is mapped to the repository owner's existing account; confirm the exact A/B accounts before inviting or assigning other members. After the initial import, changes to main are recommended through PRs. This is a team convention; server-side branch protection requires separate verification.
 
 ## Official references
 

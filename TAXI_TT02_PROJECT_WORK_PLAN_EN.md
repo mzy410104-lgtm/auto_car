@@ -27,7 +27,9 @@ Each full working week includes 24 person-hours of planned tasks and 6 person-ho
 | B | Pi environment, lidar, host communication | Mapping/localization, planning/path following, destination interface | Software versions, real scans, maps, configurations, and operating records |
 | C | STM32, interfaces, sensors, and speed feedback | Speed/steering control, stopping/takeover, status and motion feedback | Firmware, interface agreement, calibration, and evidence for control/signal loss/recovery |
 
-This is a responsibility proposal; names and assignments based on individual skills have not been established. B/C jointly own the navigation-control interface. After mechanical work is complete, A continues to handle whole-vehicle testing. Count joint work by the number of people involved.
+C is confirmed as the repository owner, [mzy410104-lgtm](https://github.com/mzy410104-lgtm), responsible for STM32 and interfaces. A/B members and their GitHub accounts remain to be confirmed. B/C jointly own the navigation-control interface. After mechanical work is complete, A continues to handle whole-vehicle testing. Count joint work by the number of people involved.
+
+The owner confirmed that no STM32 project has been created yet. Initial STM32 work therefore starts with development-tool and board checks followed by creation of the first minimal project. The program currently stored on the physical board, if any, remains unverified. Project setup uses the existing C1/C3 allocation and buffer; it does not add working hours.
 
 ## 4. Twelve-Week Full-Cycle Schedule
 

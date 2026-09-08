@@ -12,6 +12,7 @@ See the [overall project plan](TAXI_TT02_PROJECT_WORK_PLAN_EN.md) for the full c
 
 - The architecture diagram and hardware inventory are complete. This work cycle records only differences in the actual vehicle wiring; it does not redraw the architecture, repeat full hardware selection, or reconfirm the SD card, data cables, and handheld transmitter already available.
 - Retain the TT-02, Pi4, NUCLEO-F103RB, A2M8, SEN0253, two SHARP sensors, TBLE-04S, and the existing drive and power components.
+- The repository owner confirmed responsibility for STM32 (role C) and that no STM32 project has been created yet. C starts with development-tool and board checks, then creates the first minimal project. This does not establish whether the board already contains firmware.
 - Speed sensing still uses one perforated transmission gear, one dedicated gear cover, and one OPB815WZ photointerrupter. No update on delivery or installation has been received. Do not return to the shaft-hole or dual-photointerrupter designs, and do not purchase a stereo camera.
 - Do not ask again for the motor or servo model, battery capacity, or charger model that the user has already said cannot be confirmed.
 - The joint kickoff and review each last 30 minutes, totaling 3 person-hours across all three members; the previous version allocated 6 person-hours to these sessions.
@@ -20,7 +21,7 @@ See the [overall project plan](TAXI_TT02_PROJECT_WORK_PLAN_EN.md) for the full c
 
 ## 2. Effort Summary
 
-A/B/C are responsibility labels; assign them to actual names at the kickoff. The task IDs below are newly defined for this version and do not retain the meanings of IDs in the previous version.
+A/B/C are responsibility labels. C is the repository owner, [mzy410104-lgtm](https://github.com/mzy410104-lgtm), who confirmed responsibility for STM32. A/B members and their GitHub accounts remain to be confirmed. The task IDs below are newly defined for this version and do not retain the meanings of IDs in the previous version.
 
 | Member | Individual and two-person tasks | Joint kickoff | Joint review | Planned total | Debugging buffer | Full-week limit |
 |---|---:|---:|---:|---:|---:|---:|
@@ -72,9 +73,9 @@ The 1 hour for AC is this work cycle's effort allocation; it does not require al
 
 | ID | Task | Time | Work and deliverable | Prerequisites / handling deferral |
 |---|---|---:|---|---|
-| C1 | Board, project, and recovery information | 1 h | Preserve project/configuration/firmware material, check the actual MB1136 power configuration and jumpers, and check target STM32 power and interface detection | Power on only after A has completed and handed over the relevant records made with power disconnected; preserve the original program if recovery information is unclear |
+| C1 | Development tools, board, and existing firmware state | 1 h | Record the actual development tools and versions; check MB1136 power configuration/jumpers, target STM32 power and interface detection; record any known firmware already on the board and its recovery information. No existing STM32 project is available to import | Power on only after A has completed and handed over the relevant records made with power disconnected; do not treat the absence of a source project as proof that the board is blank |
 | C2 | Agree the communication interface with B | 0.5 h | Specify the physical interface, actual connections, voltage levels, parameters, information/units, and failure/recovery behavior | Same discussion as the 0.5 hour within B3; do not guess exact values when information is insufficient |
-| C3 | Minimal program and standalone operation | 1.5 h | Prepare and compile a minimal transmit/receive program; once recovery/flashing prerequisites are met, flash it, observe operation, and reproduce it after a restart | Flash verification does not prove operation; use the buffer or defer if the allocation is insufficient; do not erase or unlock an unknown original program |
+| C3 | Create the first minimal project and run it standalone | 1.5 h | Create a NUCLEO-F103RB project with the verified tools; implement and compile minimal transmission/reception using the agreed interface; once board-state and flashing prerequisites are met, flash it, observe operation, and reproduce it after a restart | Complete C1 and the C2 agreement first. Flash verification does not prove operation; use the buffer or defer if setup exceeds the allocation; do not erase or unlock an unknown original program |
 | BC | Bidirectional communication with B | 1 h | Same BC session as B's; record actual transmission/reception and disconnection/recovery; record separately when USB disconnection causes a reset | Programs at both ends, wiring, voltage levels, and power established; a self-test at one end does not count as a passed integration test |
 | AC | Check original radio control and stopping with A | 1 h | Same AC session as A's; handle signal documentation and stopping/recovery records, keeping receiver and STM32 outputs separate | Do not connect unknown signals to an unverified interface; do not claim automatic takeover is complete in this work cycle |
 | C4 | Prepare IMU and SHARP interfaces | 1 h | Check the actual hardware versions and record SEN0253 power/I²C pull-up conditions, SHARP power/ADC conditions, and missing information | Follow procedure Steps 7/8; review only before connection and move acquisition to the next stage |

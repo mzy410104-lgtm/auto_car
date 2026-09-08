@@ -1,6 +1,6 @@
 # Pi–STM32 Interface Agreement
 
-This is an interface document awaiting completion, not an implemented protocol. B/C will complete it together after inspecting the actual wiring and projects.
+This is an interface document awaiting completion, not an implemented protocol. C is [mzy410104-lgtm](https://github.com/mzy410104-lgtm), responsible for the STM32 endpoint. The B member is still to be confirmed. B/C will complete this agreement together after inspecting the actual wiring and any available software. C confirmed that the STM32 project has not yet been created; define the interface before implementing communication at both ends.
 
 | Item | Current value / status | Source or responsibility |
 |---|---|---|
