@@ -1,0 +1,21 @@
+Use case: precise-object-edit of an engineering diagram.
+Edit the supplied generated architecture image. Preserve all existing text, colors, two-panel layout, hardware identifiers, title, footer and useful information. Correct ONLY the following connection errors. This is a circuit/function connectivity edit, not a stylistic redesign. Keep text sharp, retain original aspect ratio and maximize legibility.
+
+1. LEFT PANEL, LiDAR USB path: the blue "Scans / USB" arrow from "Adaptateur USB compatible" currently joins the vertical Pi–NUCLEO UART line. REMOVE this junction. Route a separate orthogonal blue line from the USB adapter to the LEFT EDGE of Raspberry Pi 4 Model B, with an arrowhead at Pi. Use the white space above the adapter and below the PC Wi-Fi line. It must not touch either UART line. There are two independent connections: A2M8->adapter->Pi and Pi<->NUCLEO.
+
+2. LEFT PANEL, UART directions: the left vertical line labeled "Vitesse cible · angle cible · marche / arrêt" must have ONLY a DOWNWARD arrowhead at the NUCLEO top edge, no arrowhead at the Pi end. The right vertical line labeled "Vitesse mesurée · IMU · distances IR · état" must have ONLY an UPWARD arrowhead at the Pi bottom edge. Keep them separate. Preserve the UART badge and both labels.
+
+3. LEFT PANEL, SHARP and ADC: currently the SHARP sensor connects straight to ADC while "Adaptation des entrées analogiques" hangs unconnected underneath. REPLACE this by a clear series data path:
+"SHARP GP2Y0A21YK0F ×2" -> "Adaptation des entrées analogiques" -> NUCLEO.
+The first arrow points from sensor INTO adaptation block. The second arrow starts FROM adaptation block and ends at the NUCLEO lower edge, labeled "ADC". No direct sensor-to-NUCLEO bypass. Increase the gap between these two blocks or move these two boxes slightly only as necessary to make both arrows visible. Do not cross the I²C or optical timer wires.
+
+4. RIGHT PANEL, BEC power source: currently there is a dashed red arrow from "Sortie moteur" DOWN TO "BEC du TBLE-04S". This is WRONG. REMOVE that arrow completely. Draw TWO PARALLEL distinct red output paths originating at the "Entrée batterie du TBLE-04S" block: one path goes to "Sortie moteur (vers moteur de traction)"; a separate path goes DIRECTLY to "BEC du TBLE-04S". BEC is an output function of the ESC, NOT powered from the motor output. Route this extra red line around the left edge of the traction stack if needed, without touching the electronic branch. Keep BEC's existing dashed output to "Récepteur + servo" and its compatibility warning. No BEC line to Pi, NUCLEO or regulated positive output.
+
+5. LEFT PANEL, receiver line: keep exactly ONE labeled blue "Commandes manuelles · acquisition à définir" path from the CARSON receiver to the NUCLEO container. Remove the extra unlabeled duplicate receiver-to-NUCLEO line. Keep the wireless arrow from transmitter to receiver.
+
+6. LEFT PANEL, pignon to OPB: retain the grey dashed "Passage des ouvertures" optical/mechanical relation, with a single arrowhead toward OPB815WZ. Avoid a bidirectional arrow here.
+
+Do not change the total-switch interpretation: it is "INTERRUPTEUR GÉNÉRAL" upstream of both traction and electronics.
+Do not introduce any new sensor, power ratings, pins, protocol identifiers, or measurements.
+All crossings must use a bridge or remain geometrically separated; only intentional electrical junctions get a dot. Preserve the distinction blue=data, green=command, red=power, grey dashed=mechanical/optical.
+The final image must have these corrected directional connections while retaining all original labels.

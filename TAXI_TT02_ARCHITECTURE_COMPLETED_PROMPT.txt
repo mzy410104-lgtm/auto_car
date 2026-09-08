@@ -1,0 +1,53 @@
+Use case: infographic-diagram; edit of the provided handwritten architecture drawing.
+Create a clean, completed engineering architecture diagram for this exact indoor autonomous taxi project. Use the attached drawing as the source to correct and complete, not as a background to retain. Preserve its project identity and known hardware. Remove notebook grid, photo/UI overlays, handwriting, watermark and mascot. Re-layout as a polished, legible landscape technical plate, ideally 3840 x 2160, white background, crisp vector-like typography, thin orthogonal connectors, generous spacing. All diagram text should be French, using the exact hardware identifiers below. No decorative robot imagery. Do not invent technical ratings, pins, wire colors, message keys, baud rates or protocol formats.
+
+TITLE: "TAXI AUTONOME — ARCHITECTURE COMPLÉTÉE"
+SUBTITLE: "TT-02 · Navigation intérieure sans lignes au sol"
+Status footer: "Architecture proposée · Câblage, compatibilités et fonctionnement à vérifier sur le véhicule"
+Make two clearly separate large panels: LEFT about 70% width, headed "1  INFORMATION, COMMANDE ET RETOUR"; RIGHT about 30% width, headed "2  ALIMENTATION". Repeating a device in both panels represents the SAME physical device. Small footer: "Un bloc répété représente le même matériel."
+
+LEFT PANEL exact contents and connections, carefully respect arrow directions:
+A. Top left: "PC" / "Destination · supervision". A blue bidirectional arrow labeled "Wi-Fi : destination / état" connects to "Raspberry Pi 4 Model B" / "Carte · localisation · planification" / "Suivi de trajectoire · évitement".
+B. At left below Pi: "RPLIDAR A2M8" and a small intermediate "Adaptateur USB compatible" block. Connect sensor through adapter to Pi by blue arrow labelled "Scans / USB". USB physical adapter compatibility remains to verify, do not omit the adapter. Lidar is one device only.
+C. Large central pale-blue container headed "NUCLEO-F103RB — CONTRÔLE BAS NIVEAU". Inside, three readable subblocks: "Sélection manuel / automatique"; "Arrêt sur obstacle proche, défaut ou délai de la commande active dépassé"; and "Mesure de vitesse · PID vitesse · commande de direction". Treat these as software functions PROPOSED inside the STM32, not extra hardware. Add small priority text "Arrêt prioritaire > manuel > automatique".
+D. Draw TWO separate directional blue arrows between Pi and this NUCLEO container, with legible non-overlapping labels:
+Pi -> NUCLEO: "Vitesse cible · angle cible · marche / arrêt".
+NUCLEO -> Pi: "Vitesse mesurée · IMU · distances IR · état".
+A small centered badge near these links says "UART bidirectionnel · interface physique à vérifier".
+E. Above or beside NUCLEO: "Télécommande CARSON" -> dashed blue radio arrow labelled "Radio" -> "Récepteur CARSON REFLEX WHEEL PRO 3". Receiver -> NUCLEO manual/auto selection subblock, label "Commandes manuelles · acquisition à définir". This receiver readout and software arbitration are a proposal, not claimed existing implementation. All actuator control arrows MUST originate from NUCLEO selected command output; do NOT parallel-wire receiver and NUCLEO outputs.
+F. To the right of NUCLEO inside LEFT panel: exactly two distinct green command paths:
+NUCLEO -> "ESC TAMIYA TBLE-04S" labelled "Impulsions RC : traction".
+NUCLEO -> "Servo de direction" labelled "Impulsions RC : direction".
+ESC -> "Moteur de traction" by a thicker RED arrow labelled "Puissance moteur". NO direct STM32-to-motor connection. Do not label the motor as brushed, DC, 540 or any unconfirmed motor type.
+G. Below actuator blocks: "Transmission TT-02" with grey dashed mechanical connector from motor; then a mechanically connected "Pignon percé + carter dédié". Pignon -> "OPTEK OPB815WZ ×1" with grey dashed optical/mechanical arrow labelled "Passage des ouvertures".
+OPB815WZ -> "Interface optique" / "Limitation LED · adaptation de sortie" -> NUCLEO by blue line labelled "Impulsions → temporisateur". Inside this interface block distinguish "LED : limitation de courant" from "Détecteur : adaptation de sortie"; the LED resistor must NOT be shown in series with the detector signal path. The interface function is required, but resistor values or exact schematic are NOT specified.
+Under these sensor blocks include a compact note: "Mesure : amplitude de la vitesse. Sens : estimé par l’état de commande, non mesuré par la fourche unique."
+H. Bottom sensor row, routes do not cross text:
+"DFRobot SEN0253" / "IMU" -> NUCLEO by blue arrow "I²C".
+"SHARP GP2Y0A21YK0F ×2" -> "Adaptation des entrées analogiques" -> NUCLEO by blue arrow "ADC".
+Sensor arrows point INTO NUCLEO. No I2C or ADC line into Pi.
+I. Along lower left edge a small note about proposed reception/arbitration:
+"Acquisition radio et bascule manuel/auto à réaliser et à tester." and "Reprise via STM32 : ne couvre pas une panne du STM32."
+
+RIGHT PANEL: show power distribution independently so supply rails can never be confused with data.
+1. "Batterie NiMH" / "7,2 V nominal" -> red line -> "INTERRUPTEUR GÉNÉRAL" / "Confirmé : coupure de l’alimentation du véhicule".
+2. AFTER total switch, split into exactly two branches:
+- red "Branche traction" -> "Entrée batterie du TBLE-04S" -> "Sortie moteur" (or endpoint labelled motor). Show ESC receives battery voltage, not the 5V regulator output.
+- red "Branche électronique" -> "Distribution + régulation" / "Module existant : LM2596S" / "Tension, courant et tenue en charge à valider".
+3. Under electronic regulation create clear separately named endpoints connected to regulated output:
+"Pi 4 : alimentation USB-C adaptée";
+"NUCLEO : entrée d’alimentation carte à vérifier";
+"Capteurs + interfaces : rails adaptés aux fiches techniques".
+Also indicate the LiDAR's power path: "A2M8 + adaptateur : alimentation USB à vérifier" connected as proposed supply via Pi USB, with "Budget USB à vérifier". This is a proposal requiring validation, not a measurement.
+4. Near Pi power endpoint note "Référence Pi 4 : 5,1 V / 3 A" and "Ne pas déduire la capacité du module de son seul nom." Do not claim all loads together are covered by 3A.
+5. From the TBLE-04S block in this panel show a distinct BEC supply branch:
+"BEC du TBLE-04S" / "6 V / 1,5 A : spécification fabricant"
+then a DASHED red connection to "Récepteur + servo" / "Compatibilité et courant à vérifier".
+DO NOT connect the BEC to Pi, sensors or NUCLEO and do not connect BEC positive rail to regulator positive rail.
+6. Bottom box: "GND : référence commune des liaisons filaires" and "Ne pas mettre deux sorties d’alimentation en parallèle".
+7. Right-panel dashed power routes and footnote mean design under validation, no physical purchased new board implied by a function box.
+
+LEGEND at top or bottom, short and readable:
+"Bleu : données"  "Vert : commande"  "Rouge : alimentation / puissance"  "Gris pointillé : liaison mécanique / optique".
+"Données, commande et alimentation sont représentées séparément."
+Important rendering constraints: no cropped labels; exact hardware names; avoid visual spaghetti; use line bridges for crossings; no unintended junctions. Do not add cameras, two encoders, new chassis, cloud navigation, wireless motor drive or unconfirmed supply components. Do not invent completed tests. The total switch is explicitly the battery main switch, NOT the small ESC switch. French accented letters and multiplication sign must remain legible.

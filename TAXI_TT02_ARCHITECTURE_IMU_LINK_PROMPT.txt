@@ -1,0 +1,8 @@
+Edit the supplied diagram with ONE precise addition only. Do not erase, move or redraw any existing line, box, word, footer, title, or color.
+
+The DFRobot SEN0253 IMU at the bottom left currently has the text I²C nearby but its blue connection is missing. Add exactly ONE blue orthogonal signal arrow FROM the TOP CENTER of the "DFRobot SEN0253 / IMU" box INTO the BOTTOM LEFT portion of the NUCLEO-F103RB box. Use this route on the approximately 1672 x 941 image:
+start at about (175,692), rise vertically to (175,632), run horizontally right to (423,632), then rise vertically to the NUCLEO bottom edge at (423,612), ending with an upward arrowhead into NUCLEO.
+This route passes ABOVE the SHARP sensor and to the LEFT of the existing ADC vertical wire, without touching or intersecting the ADC wire at x=473. Keep the existing I²C label beside the new line. Do not add text.
+
+Preserve all existing correct connections, especially SHARP -> input adaptation -> ADC, the independent LiDAR USB route, both separate UART directions, and the ESC's parallel motor/BEC output branches.
+Do not restore any old wire coming out of the top of SHARP. No additional changes. The final image must differ from the supplied image only by this one missing IMU-to-STM32 I²C arrow.

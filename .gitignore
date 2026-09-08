@@ -1,0 +1,16 @@
+# Existing temporary downloads, rendered pages, and local preparation files.
+/tmp/
+
+# Local-only configuration and large raw recordings. Keep acquisition instructions.
+/.local/
+/data/raw/*
+!/data/raw/README.md
+.env
+.env.*
+!.env.example
+
+# Original manufacturer downloads remain local; track SOURCE_INDEX.md instead.
+/sources/**/*.pdf
+/sources/**/*.stp
+/sources/**/*.dxf
+/sources/planning/
