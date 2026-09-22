@@ -14,3 +14,8 @@
 /sources/**/*.stp
 /sources/**/*.dxf
 /sources/planning/
+
+# Keil MDK generated output and per-user interface state.
+/firmware/auto_car/MDK-ARM/auto_car/
+/firmware/auto_car/MDK-ARM/*.uvguix.*
+/firmware/auto_car/MDK-ARM/*.lst
