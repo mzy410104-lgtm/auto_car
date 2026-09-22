@@ -44,12 +44,13 @@ UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
 
-static const uint8_t uart_message[] = "STM32 UART OK\r\n";
+static const uint8_t pong_message[] = "PONG\n";
 
 static uint8_t uart_rx_byte = 0U;
-static uint8_t uart_tx_byte = 0U;
-static volatile uint8_t uart_rx_ready = 0U;
-static uint32_t last_periodic_tick = 0U;
+static uint8_t uart_line_buffer[16];
+static volatile uint8_t uart_line_length = 0U;
+static volatile uint8_t uart_line_ready = 0U;
+static uint32_t last_led_tick = 0U;
 
 /* USER CODE END PV */
 
@@ -67,7 +68,30 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
     if (huart->Instance == USART2)
     {
-        uart_rx_ready = 1U;
+        if (uart_line_ready == 0U)
+        {
+            if (uart_rx_byte == (uint8_t)'\n')
+            {
+                uart_line_ready = 1U;
+            }
+            else if (uart_rx_byte != (uint8_t)'\r')
+            {
+                if (uart_line_length < (uint8_t)sizeof(uart_line_buffer))
+                {
+                    uart_line_buffer[uart_line_length] = uart_rx_byte;
+                    uart_line_length++;
+                }
+                else
+                {
+                    uart_line_length = 0U;
+                }
+            }
+        }
+
+        if (HAL_UART_Receive_IT(&huart2, &uart_rx_byte, 1U) != HAL_OK)
+        {
+            Error_Handler();
+        }
     }
 }
 /* USER CODE END 0 */
@@ -116,32 +140,31 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	if ((HAL_GetTick() - last_periodic_tick) >= 500U)
-	{
-    last_periodic_tick = HAL_GetTick();
-
+	if ((HAL_GetTick() - last_led_tick) >= 500U)
+{
+    last_led_tick = HAL_GetTick();
     HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+}
 
-    HAL_UART_Transmit(
-        &huart2,
-        uart_message,
-        (uint16_t)(sizeof(uart_message) - 1U),
-        100U
-			);
-	}
-
-	if (uart_rx_ready != 0U)
-	{
-    uart_rx_ready = 0U;
-    uart_tx_byte = uart_rx_byte;
-
-    if (HAL_UART_Receive_IT(&huart2, &uart_rx_byte, 1U) != HAL_OK)
+if (uart_line_ready != 0U)
+{
+    if ((uart_line_length == 4U) &&
+        (uart_line_buffer[0] == (uint8_t)'P') &&
+        (uart_line_buffer[1] == (uint8_t)'I') &&
+        (uart_line_buffer[2] == (uint8_t)'N') &&
+        (uart_line_buffer[3] == (uint8_t)'G'))
     {
-        Error_Handler();
+        HAL_UART_Transmit(
+            &huart2,
+            (uint8_t *)pong_message,
+            (uint16_t)(sizeof(pong_message) - 1U),
+            100U
+        );
     }
 
-    HAL_UART_Transmit(&huart2, &uart_tx_byte, 1U, 100U);
-	}
+    uart_line_length = 0U;
+    uart_line_ready = 0U;
+}
   }
   /* USER CODE END 3 */
 }
