@@ -45,7 +45,11 @@ UART_HandleTypeDef huart2;
 /* USER CODE BEGIN PV */
 
 static const uint8_t uart_message[] = "STM32 UART OK\r\n";
+
 static uint8_t uart_rx_byte = 0U;
+static uint8_t uart_tx_byte = 0U;
+static volatile uint8_t uart_rx_ready = 0U;
+static uint32_t last_periodic_tick = 0U;
 
 /* USER CODE END PV */
 
@@ -59,7 +63,13 @@ static void MX_USART2_UART_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+    if (huart->Instance == USART2)
+    {
+        uart_rx_ready = 1U;
+    }
+}
 /* USER CODE END 0 */
 
 /**
@@ -93,16 +103,23 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-
+	if (HAL_UART_Receive_IT(&huart2, &uart_rx_byte, 1U) != HAL_OK)
+	{
+    Error_Handler();
+	}
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-  /* USER CODE END WHILE */
+    /* USER CODE END WHILE */
 
-  /* USER CODE BEGIN 3 */
+    /* USER CODE BEGIN 3 */
+	if ((HAL_GetTick() - last_periodic_tick) >= 500U)
+	{
+    last_periodic_tick = HAL_GetTick();
+
     HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
 
     HAL_UART_Transmit(
@@ -110,17 +127,25 @@ int main(void)
         uart_message,
         (uint16_t)(sizeof(uart_message) - 1U),
         100U
-    );
-				
-		if (HAL_UART_Receive(&huart2, &uart_rx_byte, 1U, 10U) == HAL_OK)
-		{	
-    HAL_UART_Transmit(&huart2, &uart_rx_byte, 1U, 100U);
-		}
+			);
+	}
 
-    HAL_Delay(500);
+	if (uart_rx_ready != 0U)
+	{
+    uart_rx_ready = 0U;
+    uart_tx_byte = uart_rx_byte;
+
+    if (HAL_UART_Receive_IT(&huart2, &uart_rx_byte, 1U) != HAL_OK)
+    {
+        Error_Handler();
+    }
+
+    HAL_UART_Transmit(&huart2, &uart_tx_byte, 1U, 100U);
+	}
   }
   /* USER CODE END 3 */
 }
+
 /**
   * @brief System Clock Configuration
   * @retval None
