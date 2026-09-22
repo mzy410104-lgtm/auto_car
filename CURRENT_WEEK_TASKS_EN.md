@@ -24,6 +24,8 @@ Each member has approximately 10 hours for a full workweek. Allocate 8 hours to 
 
 C is the repository owner, [mzy410104-lgtm](https://github.com/mzy410104-lgtm), and owns the STM32 endpoint. A/B names and GitHub accounts remain unconfirmed and must not be inferred.
 
+This work cycle follows the three-month ownership confirmed on 2026-09-22: A owns pickup service and navigation execution, B owns camera AI and localization, and C owns STM32 and low-level vehicle control.
+
 ## 3. A: fixed-pickup service and navigation preparation — 8 hours
 
 | ID | Time | Task | Completion evidence |

@@ -26,6 +26,8 @@ Each full working week includes 24 person-hours of planned tasks and 6 person-ho
 
 ## 3. Long-Term Responsibilities
 
+The user confirmed on 2026-09-22 that the following A/B/C ownership applies across the three-month project. Weekly tasks may move when prerequisites or vehicle access change, but responsibility for the three main workstreams remains fixed unless the team explicitly revises it.
+
 | Responsibility label | Main duties in the first half | Main duties during navigation work | Handover contents |
 |---|---|---|---|
 | A | Fixed-pickup identifiers, QR codes, user web workflow and navigation-task state | Convert accepted pickup requests into navigation goals; implement global planning, path following, local replanning, arrival state and user-visible status | QR material, pickup identifiers, web software, task-state records, planning configurations and route/obstacle test evidence |
