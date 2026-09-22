@@ -18,35 +18,35 @@ Each member has approximately 10 hours for a full workweek. Allocate 8 hours to 
 
 | Member | Revised responsibility | Planned work | Buffer | Total |
 |---|---|---:|---:|---:|
-| A | Camera, visual-place data, fixed-pickup QR and user web flow | 8 h | 2 h | 10 h |
-| B | Raspberry Pi, lidar, mapping/localization preparation and high-level interfaces | 8 h | 2 h | 10 h |
+| A | Fixed-pickup QR, user web flow, task state and navigation preparation | 8 h | 2 h | 10 h |
+| B | Camera data, AI-model training, Raspberry Pi, lidar and localization preparation | 8 h | 2 h | 10 h |
 | C | STM32, radio/actuator control, sensors, motion feedback and safety | 8 h | 2 h | 10 h |
 
 C is the repository owner, [mzy410104-lgtm](https://github.com/mzy410104-lgtm), and owns the STM32 endpoint. A/B names and GitHub accounts remain unconfirmed and must not be inferred.
 
-## 3. A: camera and fixed-pickup service — 8 hours
+## 3. A: fixed-pickup service and navigation preparation — 8 hours
 
 | ID | Time | Task | Completion evidence |
 |---|---:|---|---|
 | A1 | 1.0 h | List the intended fixed pickup points and assign project-defined identifiers without map coordinates yet | Reviewed pickup list; unresolved physical locations are explicit |
-| A2 | 1.0 h | Establish whether a usable monocular camera is already available; record its exact markings, interface, lens/field-of-view information from its source, and mounting constraints | Photographs or purchasing evidence and a traceable camera record; no inferred model |
-| A3 | 1.5 h | Define image acquisition and labelling rules for reference place or map-region recognition | Written rules covering place/region label, recording session, viewpoint, orientation and lighting; validation runs are separated from training sessions |
-| A4 | 3.0 h | Build a minimal QR/web prototype that submits one pickup identifier and shows whether the request was accepted or rejected | QR content, source code, startup instructions and a phone-to-service request log |
-| AB | 1.0 h | Agree the pickup-request and visual-output boundaries with B | One shared interface note: pickup identifier and task state; visual place/region and confidence. Exact fields remain undecided until both implementations agree |
+| A2 | 3.0 h | Build a minimal QR/web prototype that submits one pickup identifier and shows whether the request was accepted or rejected | QR content, source code, startup instructions and a phone-to-service request log |
+| A3 | 1.5 h | Define pickup-task states and the boundary between an accepted request, mapped stopping pose, planning, arrival and failure | Written task flow and unresolved decisions; no invented map coordinates |
+| A4 | 1.0 h | Prepare the navigation software structure or recorded-data replay needed later for global planning and obstacle handling | Versioned source/configuration and reproduction note; no claim of real navigation success |
+| AB | 1.0 h | Agree pickup-request, pose, obstacle and localization-health boundaries with B | One shared interface note; exact fields remain undecided until both implementations agree |
 | A5 | 0.5 h | Record results and next failures in the repository | Test record linking evidence and outstanding actions |
 
 The phone QR path and onboard-camera path are independent. Scanning a pickup QR does not provide the vehicle pose. A visual place label does not establish metric `(x, y, yaw)`.
 
-## 4. B: Pi and lidar baseline — 8 hours
+## 4. B: camera AI, Pi and lidar baseline — 8 hours
 
 | ID | Time | Task | Completion evidence |
 |---|---:|---|---|
-| B1 | 1.5 h | Record the actual Pi system, available storage, A2M8 adapter and physical connection used for the test | Commands, outputs, connection photograph and power condition |
-| B2 | 2.0 h | Acquire and save real A2M8 scans while the vehicle is stationary and secured | Raw scan or recording, timestamps, operating duration and a visible response to a moved test object |
-| B3 | 1.0 h | Stop and restart acquisition using written instructions | Reproduction steps and logs from both runs |
-| B4 | 1.5 h | Prepare mapping/localization software and recorded-data replay without claiming real mapping success | Versioned configuration, dependency record and replay result |
-| AB | 1.0 h | Agree pickup-request and visual-output boundaries with A | Same shared interface note counted for B's time |
-| BC | 1.0 h | Agree the navigation-control and motion-feedback boundary with C | One shared interface note covering intended command, feedback, heartbeat, timeout and fault semantics; undecided parameters remain explicit |
+| B1 | 1.0 h | Establish whether a usable monocular camera is already available; record exact markings, interface, lens/field-of-view information from its source and mounting constraints | Photographs or purchasing evidence and a traceable camera record; no inferred model |
+| B2 | 1.5 h | Define image acquisition, labelling and session-separated training/validation rules for reference place or map-region recognition | Written rules covering place/region, session, viewpoint, orientation, lighting and held-out runs |
+| B3 | 2.0 h | Record the Pi/A2M8 connection and acquire real stationary scans, including response to a moved test object | System/connection record, raw scan, timestamps, operating duration and restart instructions |
+| B4 | 1.5 h | Prepare the AI training environment, dataset manifest structure and lidar mapping/localization replay without claiming model or mapping success | Versioned dependencies, configuration and reproducible environment checks |
+| AB | 1.0 h | Agree pickup-request, pose, obstacle and localization-health boundaries with A | Same shared interface note counted for B's time |
+| BC | 1.0 h | Agree motion-feedback and localization-input requirements with C | Shared note covering required feedback, timestamps, units, heartbeat, timeout and faults; undecided parameters remain explicit |
 
 Do not power or move the vehicle during stationary scan work unless the corresponding power and movement prerequisites have been completed and the session is explicitly coordinated.
 
@@ -69,9 +69,9 @@ Do not connect the receiver and STM32 outputs directly to the same servo or ESC 
 
 | Handover | Owner pair | Required content |
 |---|---|---|
-| Pickup request | A/B | Pickup identifier, request acceptance/rejection, task state, duplicate-request behavior and network failure behavior |
-| Visual localization | A/B | Place or map-region result, confidence meaning, timestamp, validation conditions and rejection behavior |
-| Navigation control | B/C | Target motion, stop priority, heartbeat, timeout, feedback units, timestamps, faults and reconnection behavior |
+| Pickup and navigation task | A/B | Pickup identifier, mapped stopping pose, request acceptance/rejection, task state, duplicate-request behavior and network failure behavior |
+| Localization output | B/A | Planar pose, visual place/region and confidence, timestamp, pose quality, validation conditions and rejection behavior |
+| Vehicle control | A/C with B's localization requirements | Target motion, stop priority, heartbeat, timeout, feedback units, timestamps, faults and reconnection behavior |
 | Power and vehicle access | A/B/C | Actual supply branches, isolation, who has the vehicle, permitted movement state and handover time |
 
 Exact message identifiers, field names, units, update rates, timeout values and wiring must be agreed from the implementations and measurements. This plan does not predefine them.
@@ -81,8 +81,8 @@ Exact message identifiers, field names, units, update rates, timeout values and 
 This cycle is complete only when all three baseline paths have reproducible evidence:
 
 - A: one location-specific QR reaches the request service from a phone and returns an explicit result.
-- B: real A2M8 data is acquired, saved, stopped and reacquired from written instructions.
+- B: camera availability is recorded, image/training rules and the AI environment are reproducible, and real A2M8 data is acquired, saved, stopped and reacquired from written instructions.
 - C: the original radio path demonstrates controlled raised-wheel movement and reliable stopping, and isolated STM32 output work has a recorded state.
-- A/B and B/C interface notes identify the information crossing each boundary and explicitly retain undecided parameters.
+- A/B and high-level/low-level vehicle interface notes identify the information crossing each boundary and explicitly retain undecided parameters.
 
 If a prerequisite is missing, record the stopping point and next action. Preparation, compilation, a web page opening, device detection or one successful message does not establish the complete function.
