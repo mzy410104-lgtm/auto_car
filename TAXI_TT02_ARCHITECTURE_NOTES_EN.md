@@ -1,12 +1,12 @@
-# TT-02 Autonomous Taxi: Completed Architecture Notes
+# TT-02 Autonomous Taxi: Architecture Notes
 
-Date: 2026-09-08.
+Original diagram date: 2026-09-08. Logical-architecture revision: 2026-09-22.
 
 Basis: the user's handwritten architecture diagram and the project's current hardware inventory. The user explicitly confirmed that Interrupteur in the drawing means the battery main switch.
 
 This deliverable describes a functional architecture and power-distribution proposal, not a verified wiring diagram of the physical vehicle. No wiring, power-up, firmware modification, mode switching, procurement or hardware tests were performed for it. The original handwritten photograph is unchanged.
 
-Current diagram: [English architecture PNG](TAXI_TT02_ARCHITECTURE_EN.png). The [earlier French architecture PNG](TAXI_TT02_ARCHITECTURE_COMPLETED.png) is retained as a source version.
+The 2026-09-08 hardware-and-power diagram remains available as the [English architecture PNG](TAXI_TT02_ARCHITECTURE_EN.png). The [earlier French architecture PNG](TAXI_TT02_ARCHITECTURE_COMPLETED.png) is retained as a source version. These PNG files predate the adopted camera-region localization and fixed-pickup QR workflow. The logical architecture below is authoritative for those functions; the old PNG must not be used to claim that the camera, visual model, QR service or pose fusion has been implemented.
 
 Companion procedure and record tables: [step-by-step verification](TAXI_TT02_VERIFICATION_STEPS_EN.md). No measured results have been entered in that procedure.
 
@@ -27,6 +27,45 @@ The final French diagram was checked connection by connection: the lidar USB pat
 7. The drive motor turns the perforated gear through the TT-02 mechanical transmission, and one OPB815WZ detects it. The LED requires current limiting and the phototransistor output requires conditioning before entering the STM32 timer. The interface box is not a detailed resistor-wiring diagram.
 8. Single-photointerrupter feedback provides speed magnitude. Direction is inferred from validated control state. Conversion from perforated-gear counts to vehicle speed still requires the actual aperture structure, counting method, transmission relationship and effective tire circumference.
 9. SEN0253 connects to the STM32 over I²C. The analog outputs of the two GP2Y0A21YK0F sensors connect to ADC inputs through verified input conditioning. Power, signal levels, pins and protection still need to be established.
+
+## Adopted logical architecture: visual region constraint, continuous lidar pose and fixed pickup QR
+
+```mermaid
+flowchart TD
+    QR[Location-specific pickup QR] --> PHONE[User phone web page]
+    PHONE --> SERVICE[Pickup request service]
+    SERVICE --> PICKUP[Pickup identifier]
+    PICKUP --> STATIONS[Mapped pickup stopping poses]
+
+    CAMERA[Onboard monocular camera] --> VISION[Visual-place recognition]
+    VISION --> REGION[Place or map-region constraint plus confidence]
+
+    LIDAR[RPLIDAR A2M8] --> SCANMATCH[Lidar map matching]
+    ENCODER[Wheel-speed feedback] --> FUSION[Pose estimation and validation]
+    IMU[SEN0253 IMU] --> FUSION
+    SCANMATCH --> FUSION
+    REGION --> FUSION
+    FUSION --> POSE[Continuous planar pose x y yaw]
+
+    POSE --> GLOBAL[Global route planning]
+    STATIONS --> GLOBAL
+    LIDAR --> COSTMAP[Live obstacle costmap]
+    GLOBAL --> LOCAL[Path following and local replanning]
+    COSTMAP --> LOCAL
+    SHARP[Two calibrated SHARP sensors] --> PROTECTION[Close-range stop protection]
+    PROTECTION --> LOCAL
+
+    LOCAL --> PI[Raspberry Pi command and task state]
+    PI --> STM32[NUCLEO-F103RB control and feedback]
+    STM32 --> ESC[TBLE-04S and drive motor]
+    STM32 --> SERVO[Steering servo]
+```
+
+The onboard camera and the phone QR scanner are separate paths. The camera observes the environment and produces a validated place or map-region constraint. It does not replace continuous metric localization. Lidar map matching is the primary correction for the planar pose `(x, y, yaw)`. Wheel-speed and IMU measurements support short-term motion estimation and timing consistency. A validated visual result may constrain initial placement, check consistency or assist recovery after localization loss.
+
+Each pickup point has its own QR code. Scanning it produces a pickup identifier, not a measured phone position. After the lidar map exists, B records a feasible stopping pose and arrival heading for every enabled pickup identifier. Route planning consumes that mapped pose. The QR code's physical wall position is not automatically the vehicle stopping pose.
+
+The two SHARP sensors provide calibrated close-range protection. They are not map-position measurements. Obstacle detection, protective stopping, route detouring and reporting that no route exists remain separate acceptance results.
 
 ## Interpreting the power diagram
 

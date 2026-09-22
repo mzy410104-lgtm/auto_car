@@ -1,6 +1,6 @@
 # auto_car — Autonomous Taxi
 
-A three-person indoor autonomous vehicle project using the existing TT-02 chassis for localization, destination planning, path following and obstacle handling in an environment without floor markings.
+A three-person indoor autonomous vehicle project using the existing TT-02 chassis. An onboard monocular camera identifies a reference place or map region; lidar map matching, wheel-speed feedback and IMU information provide continuous planar pose. Users request the vehicle by scanning a location-specific QR code at a fixed pickup point. The vehicle plans and follows the route while handling obstacles in an environment without floor markings.
 
 [Public repository](https://github.com/mzy410104-lgtm/auto_car) · [Current Issues](https://github.com/mzy410104-lgtm/auto_car/issues)
 
@@ -11,16 +11,18 @@ The repository currently contains a hardware inventory, architecture diagram, wo
 | Content | Document |
 |---|---|
 | Current work cycle: tasks and hours | [CURRENT_WEEK_TASKS_EN.md](CURRENT_WEEK_TASKS_EN.md) |
-| Overall project plan | [TAXI_TT02_PROJECT_WORK_PLAN_EN.md](TAXI_TT02_PROJECT_WORK_PLAN_EN.md) |
-| Six tasks and their completion evidence | [TASK_BOARD.md](TASK_BOARD.md) |
+| Overall project plan, revised localization method and three-person allocation | [TAXI_TT02_PROJECT_WORK_PLAN_EN.md](TAXI_TT02_PROJECT_WORK_PLAN_EN.md) |
+| Foundational task board and existing GitHub issue mapping from before the scope revision | [TASK_BOARD.md](TASK_BOARD.md) |
 | Git/GitHub collaboration workflow | [CONTRIBUTING.md](CONTRIBUTING.md) |
 | Existing hardware | [EXISTING_HARDWARE_INVENTORY_EN.md](EXISTING_HARDWARE_INVENTORY_EN.md) |
 | Additional parts and cost information | [TAXI_TT02_HARDWARE_BOM_EN.md](TAXI_TT02_HARDWARE_BOM_EN.md) |
-| Architecture notes | [TAXI_TT02_ARCHITECTURE_NOTES_EN.md](TAXI_TT02_ARCHITECTURE_NOTES_EN.md) |
+| Architecture notes and authoritative logical workflow | [TAXI_TT02_ARCHITECTURE_NOTES_EN.md](TAXI_TT02_ARCHITECTURE_NOTES_EN.md) |
 | Step-by-step hardware verification | [TAXI_TT02_VERIFICATION_STEPS_EN.md](TAXI_TT02_VERIFICATION_STEPS_EN.md) |
 | Official mechanical source documents | [SOURCE_INDEX.md](sources/CoVAPSy_encoder_official/SOURCE_INDEX.md) |
 
-![Project architecture in English](TAXI_TT02_ARCHITECTURE_EN.png)
+The PNG below records the earlier hardware-and-power diagram. The revised camera-region, lidar-pose and fixed-pickup QR workflow is maintained in the [architecture notes](TAXI_TT02_ARCHITECTURE_NOTES_EN.md).
+
+![Earlier hardware and power architecture in English](TAXI_TT02_ARCHITECTURE_EN.png)
 
 ## Repository layout
 

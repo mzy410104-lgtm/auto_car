@@ -1,5 +1,7 @@
 # Autonomous Taxi: Local Task Board
 
+> Scope notice, 2026-09-22: this file preserves the six foundational tasks and their existing GitHub issue mapping. The revised camera-region localization, lidar-based continuous pose and fixed-pickup QR allocation is maintained in [the current work cycle](CURRENT_WEEK_TASKS_EN.md) and [the overall project plan](TAXI_TT02_PROJECT_WORK_PLAN_EN.md). Do not assign new camera, visual-model or QR work from the older task descriptions below. Existing issue titles or status have not been changed by this local documentation revision.
+
 Created: 2026-09-08. Basis: the six deliverables in Section 8 of the [current work cycle plan](CURRENT_WEEK_TASKS_EN.md).
 
 `LOCAL-001` through `LOCAL-006` are local task IDs defined in this file, **not remote issue numbers**. Corresponding issues have been created in [mzy410104-lgtm/auto_car](https://github.com/mzy410104-lgtm/auto_car); the mapping is shown below. C is the repository owner, [mzy410104-lgtm](https://github.com/mzy410104-lgtm), who confirmed responsibility for STM32. A/B members and their GitHub accounts remain to be confirmed. A GitHub Projects board has not yet been configured.
