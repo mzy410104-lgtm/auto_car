@@ -10,7 +10,7 @@ The repository currently contains a hardware inventory, architecture diagram, wo
 
 | Content | Document |
 |---|---|
-| Current work cycle: tasks and hours | [CURRENT_WEEK_TASKS_EN.md](CURRENT_WEEK_TASKS_EN.md) |
+| Current two-week work cycle: tasks, hours and evidence | [CURRENT_WEEK_TASKS_EN.md](CURRENT_WEEK_TASKS_EN.md) |
 | Overall project plan, revised localization method and three-person allocation | [TAXI_TT02_PROJECT_WORK_PLAN_EN.md](TAXI_TT02_PROJECT_WORK_PLAN_EN.md) |
 | Foundational task board and existing GitHub issue mapping from before the scope revision | [TASK_BOARD.md](TASK_BOARD.md) |
 | Git/GitHub collaboration workflow | [CONTRIBUTING.md](CONTRIBUTING.md) |
@@ -44,7 +44,7 @@ sources/              Source index and original project image; manufacturer PDF/
 
 Define each task, its owner and completion evidence before editing files on a task branch. Use a Pull Request for another teammate to review before merging into main. Record source-code integration and physical-vehicle acceptance separately. See the [collaboration guide](CONTRIBUTING.md).
 
-Each of the three members has approximately 10 hours per full workweek. The current plan allocates 8 hours of tasks and 2 hours of debugging buffer per person, including meetings and joint integration sessions. Credit completed results against evidence; calendar progress alone does not establish completion.
+Each of the three members has approximately 10 hours per full workweek. Work is assigned and reviewed in six two-week cycles. Each cycle allocates 16 hours of tasks and 4 hours of debugging buffer per person, including meetings and joint integration sessions. Credit completed results against evidence; calendar progress alone does not establish completion.
 
 ## Source material and publication scope
 
