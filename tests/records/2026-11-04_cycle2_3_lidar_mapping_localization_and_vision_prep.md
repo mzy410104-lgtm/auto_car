@@ -67,6 +67,9 @@
     - Final stationary pose estimate: `x_m = -0.0133 m`, `y_m = 0.0 m`, `yaw_deg = 0.0°`.
   - **Visual Region Classifier Self-Test (`vision_region_model.py --self-test`)**:
     - Verified session separation across 4 synthetic sessions (`2` train, `1` val, `1` test), trained 3-region softmax classifier on `21` training frames, achieved `1.000` held-out validation/test accuracy, and verified JSON model serialization and single-frame inference (`validated_on_held_out_runs = True`).
+  - **Unified Live Localization & Obstacle Service Self-Test (`localization_service.py --self-test`)**:
+    - Verified live HTTP `/api/localization` endpoint reaching `localization_status = VALID` (`pose = (0.02 m, 0.02 m)`, `min_front = 2.2 m`).
+    - Verified `POST /api/resolve_pickup` acceptance of mapped station `PICKUP_01` (`HTTP 200`, returning `target_stopping_pose` and `current_vehicle_pose`) and deterministic rejection of unmapped station `PICKUP_02` (`HTTP 409 STATION_UNMAPPED`) and unknown station `PICKUP_99` (`HTTP 404 UNKNOWN_PICKUP_ID`).
 - Conclusion and applicable conditions:
   - **Pass** for offline Cycle 2 & Cycle 3 software preparation and cross-run stationary RPLIDAR A2M8 validation. This record establishes that the mapping, scan-to-map localization, obstacle sector extraction, and visual region training/validation pipelines are implemented and verified on recorded/synthetic data. It does **not** claim completion of the physical classroom map or real classroom visual dataset collection, which require on-site vehicle sessions in Cycles 2–3.
 - Unresolved items, next step and owner:

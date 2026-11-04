@@ -26,6 +26,7 @@ This directory contains the Raspberry Pi 4 onboard software for RPLIDAR A2M8 sca
 - [`lidar_mapper.py`](lidar_mapper.py): Cycle 2 2D log-odds occupancy grid mapper (`0.05 m/cell`) that builds portable JSON map packages (`--out-map`) and SVG occupancy visualizations (`--out-svg`) from recorded RPLIDAR A2M8 scan CSVs.
 - [`lidar_localize.py`](lidar_localize.py): Cycle 3 multi-resolution scan-to-map planar pose `(x_m, y_m, yaw_rad)` localizer with STM32 motion-feedback dead-reckoning prediction, validated visual region constraint gating, and 8-sector obstacle extraction (`min_front_distance_m`, `sector_distances_m`).
 - [`vision_region_model.py`](vision_region_model.py): Cycle 3 visual map-region classifier trainer, held-out session evaluator, and single-frame JSON inference module (`480-D` `6×8` spatial color/luminance/gradient grid descriptor).
+- [`localization_service.py`](localization_service.py): Cycles 4–5 unified real-time perception, scan-to-map localization, and obstacle HTTP/JSON service (`http://<pi-ip>:8082`) combining live RPLIDAR A2M8 (or recorded CSV replay), STM32 IMU/motion feedback, and OV5647 region inference to serve `/api/localization`, `/api/pickup_poses`, and `/api/resolve_pickup` to Member A's planner.
 
 ## Reproducible Startup & Restart Instructions
 
@@ -85,6 +86,13 @@ python3 onboard/vision_region_model.py --manifest ~/camera_dataset/manifest.csv 
 python3 onboard/lidar_mapper.py --self-test
 python3 onboard/lidar_localize.py --self-test
 python3 onboard/vision_region_model.py --self-test
+python3 onboard/localization_service.py --self-test
+
+# Launch the unified Cycles 4-5 Live Localization & Obstacle HTTP Service (port 8082)
+# Replay mode (using recorded scans):
+python3 onboard/localization_service.py --map data/raw/scan_run2_occupancy_map.json --replay-csv data/raw/scan_run1_moved_object.csv --http-port 8082
+# Live hardware mode on Raspberry Pi (RPLIDAR A2M8 + STM32 + OV5647 model):
+python3 onboard/localization_service.py --map ~/room_map.json --lidar-port /dev/ttyUSB0 --stm32-port /dev/ttyACM0 --vision-model ~/camera_dataset/region_model.json --http-port 8082
 ```
 
 ## Related Agreements and Test Records
