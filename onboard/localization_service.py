@@ -392,25 +392,17 @@ class LocalizationServiceEngine:
 
     def _live_lidar_loop(self) -> None:
         """Connect to RPLIDAR A2M8 over `/dev/ttyUSB0`, spin motor (PWM=660), and stream 360° scans."""
+        from lidar_acquire import start_a2_motor, stop_a2_motor
         from rplidar import RPLidar
-
-        def set_a2_pwm(lidar_obj, pwm: int):
-            payload = struct.pack("<H", pwm)
-            req = bytes([0xA5, 0xF0, len(payload)]) + payload
-            checksum = 0
-            for b in req:
-                checksum ^= b
-            req += bytes([checksum])
-            lidar_obj._serial_port.write(req)
-            lidar_obj._serial_port.flush()
 
         lidar = None
         try:
             lidar = RPLidar(self.lidar_port, baudrate=115200, timeout=3)
-            lidar._serial_port.dtr = False
+            lidar.start_motor = lambda: start_a2_motor(lidar, 660)
+            lidar.stop_motor = lambda: stop_a2_motor(lidar)
             lidar.start_motor()
-            set_a2_pwm(lidar, 660)
             time.sleep(1.0)
+            lidar._serial.reset_input_buffer()
             for scan in lidar.iter_scans(max_buf_meas=1500):
                 if not self.running:
                     break
@@ -429,11 +421,7 @@ class LocalizationServiceEngine:
         finally:
             if lidar is not None:
                 try:
-                    lidar.stop()
-                    time.sleep(0.1)
-                    set_a2_pwm(lidar, 0)
-                    lidar._serial_port.dtr = True
-                    lidar.stop_motor()
+                    stop_a2_motor(lidar)
                     lidar.disconnect()
                 except Exception:
                     pass
