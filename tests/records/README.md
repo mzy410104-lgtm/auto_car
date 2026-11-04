@@ -10,5 +10,6 @@ Available records:
 - [Raspberry Pi 4 and RPLIDAR A2M8 baseline acquisition and replay, 2026-11-02](2026-11-02_pi_rplidar_a2m8_baseline.md)
 - [Raspberry Pi 4 and STM32 NUCLEO-F103RB serial communication test, 2026-11-02](2026-11-02_pi_stm32_usart2_comm.md)
 - [Raspberry Pi 4 + Camera Module Rev 1.3 (OV5647) verification and vision manifest validation, 2026-11-03](2026-11-03_pi_camera_ov5647_and_vision_manifest.md)
+- [Cycle 2 & 3 RPLIDAR occupancy mapping, scan-to-map localization and visual region classifier preparation, 2026-11-04](2026-11-04_cycle2_3_lidar_mapping_localization_and_vision_prep.md)
 
 Create a separate Markdown record for each actual test and explicitly choose its filename. Include traceable source commits, wiring/power conditions, actual data and conclusions. Small logs and images checked for public sharing may be committed with the record. Index large raw files according to the [data/raw instructions](../../data/raw/README.md).

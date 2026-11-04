@@ -23,6 +23,9 @@ This directory contains the Raspberry Pi 4 onboard software for RPLIDAR A2M8 sca
 - [`vision_manifest.py`](vision_manifest.py): Dataset manifest loader, 14-column schema validator, and strict session-leakage checker (`--self-test`, `--check-files`, `--require-held-out-splits`).
 - [`requirements-vision.txt`](requirements-vision.txt): Reproducible Python package specification for the vision dataset and training preparation environment (`Task B4`).
 - [`CAMERA_AND_DATASET_RULES.md`](CAMERA_AND_DATASET_RULES.md): Monocular camera technical requirements, verified OV5647 hardware record (`Task B1`), and session-separated region dataset labelling rules (`Task B2`).
+- [`lidar_mapper.py`](lidar_mapper.py): Cycle 2 2D log-odds occupancy grid mapper (`0.05 m/cell`) that builds portable JSON map packages (`--out-map`) and SVG occupancy visualizations (`--out-svg`) from recorded RPLIDAR A2M8 scan CSVs.
+- [`lidar_localize.py`](lidar_localize.py): Cycle 3 multi-resolution scan-to-map planar pose `(x_m, y_m, yaw_rad)` localizer with STM32 motion-feedback dead-reckoning prediction, validated visual region constraint gating, and 8-sector obstacle extraction (`min_front_distance_m`, `sector_distances_m`).
+- [`vision_region_model.py`](vision_region_model.py): Cycle 3 visual map-region classifier trainer, held-out session evaluator, and single-frame JSON inference module (`480-D` `6×8` spatial color/luminance/gradient grid descriptor).
 
 ## Reproducible Startup & Restart Instructions
 
@@ -67,6 +70,23 @@ python3 onboard/vision_manifest.py --self-test
 python3 onboard/vision_manifest.py ~/camera_dataset/manifest.csv --check-files
 ```
 
+### 5. Cycle 2 & 3 Occupancy Grid Mapping, Scan-to-Map Localization & Visual Classifier
+```bash
+# Build a 2D occupancy grid map (JSON + SVG) from recorded RPLIDAR scans
+python3 onboard/lidar_mapper.py data/raw/scan_run2_reacquire.csv --out-map data/raw/scan_run2_occupancy_map.json --out-svg data/raw/scan_run2_occupancy_map.svg
+
+# Run scan-to-map localization replay across recorded scans against a saved JSON map
+python3 onboard/lidar_localize.py --map data/raw/scan_run2_occupancy_map.json --replay-csv data/raw/scan_run1_moved_object.csv --out-json data/raw/scan_run1_localization_summary.json
+
+# Train & evaluate visual map-region classifier on a session-separated dataset manifest
+python3 onboard/vision_region_model.py --manifest ~/camera_dataset/manifest.csv --out-model ~/camera_dataset/region_model.json
+
+# Run built-in deterministic self-tests for mapper, localizer, and visual region classifier
+python3 onboard/lidar_mapper.py --self-test
+python3 onboard/lidar_localize.py --self-test
+python3 onboard/vision_region_model.py --self-test
+```
+
 ## Related Agreements and Test Records
 
 - Pickup request, localization, and obstacle interface (`Task AB`): [`../interfaces/LOCALIZATION_AND_PICKUP_INTERFACE.md`](../interfaces/LOCALIZATION_AND_PICKUP_INTERFACE.md)
@@ -74,3 +94,4 @@ python3 onboard/vision_manifest.py ~/camera_dataset/manifest.csv --check-files
 - RPLIDAR A2M8 acquisition and replay test record (`Tasks B3 & B5`): [`../tests/records/2026-11-02_pi_rplidar_a2m8_baseline.md`](../tests/records/2026-11-02_pi_rplidar_a2m8_baseline.md)
 - Pi–STM32 serial communication and reconnect test record (`Tasks BC & C5`): [`../tests/records/2026-11-02_pi_stm32_usart2_comm.md`](../tests/records/2026-11-02_pi_stm32_usart2_comm.md)
 - OV5647 camera verification and vision manifest test record (`Tasks B1, B2, B4, B6`): [`../tests/records/2026-11-03_pi_camera_ov5647_and_vision_manifest.md`](../tests/records/2026-11-03_pi_camera_ov5647_and_vision_manifest.md)
+- Cycle 2 & 3 occupancy mapping, scan-to-map localization & visual classifier test record: [`../tests/records/2026-11-04_cycle2_3_lidar_mapping_localization_and_vision_prep.md`](../tests/records/2026-11-04_cycle2_3_lidar_mapping_localization_and_vision_prep.md)
