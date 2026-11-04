@@ -1,0 +1,17 @@
+# Reproducible Python Dependencies for Onboard Vision Manifest & Region Classification Preparation
+# Related Task: Cycle 1 Task B4 (AI training environment & dataset-manifest structure)
+# Tested on:
+#   - Raspberry Pi 4 Model B (Debian GNU/Linux 13.4 trixie, aarch64, Python 3.13.5)
+#   - macOS Development Host (Python 3.x)
+#
+# Note: On Raspberry Pi OS (Debian 13 trixie), hardware camera tools (`rpicam-apps`,
+# `python3-picamera2`, `python3-libcamera`) are installed via apt and exposed to the
+# virtual environment using `python3 -m venv --system-site-packages venv`.
+
+Pillow>=10.0.0,<12.0.0
+numpy>=1.26.0,<3.0.0
+
+# Cycle 3 visual region classifier training dependencies (install on training host or Pi venv when ready):
+# torch>=2.2.0
+# torchvision>=0.17.0
+# scikit-learn>=1.4.0
