@@ -24,6 +24,8 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "string.h"
+#include "math.h"
+#include "encoder.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -61,6 +63,10 @@
 
 #define BNO055_SYS_STATUS_REGISTER  0x39U
 #define BNO055_SYS_ERR_REGISTER     0x3AU
+
+/* Contact-wheel spacing from the supplied encoder project; measure on car. */
+#define ODOM_TRACK_WIDTH_M          0.202f
+#define ODOM_PI_F                   3.14159265359f
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -73,6 +79,8 @@ I2C_HandleTypeDef hi2c1;
 
 TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim4;
+TIM_HandleTypeDef htim1;
+TIM_HandleTypeDef htim2;
 
 UART_HandleTypeDef huart2;
 
@@ -97,6 +105,16 @@ static uint32_t last_imu_tick = 0U;
 
 static uint32_t last_calib_tick = 0U;
 
+volatile float robot_x_m = 0.0f;
+volatile float robot_y_m = 0.0f;
+volatile float robot_theta_rad = 0.0f;
+volatile float robot_theta_deg = 0.0f;
+volatile float robot_theta_total_deg = 0.0f;
+volatile float robot_v_mps = 0.0f;
+volatile float robot_omega_rad_s = 0.0f;
+static float odom_last_left_m = 0.0f;
+static float odom_last_right_m = 0.0f;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -106,6 +124,8 @@ static void MX_USART2_UART_Init(void);
 static void MX_TIM3_Init(void);
 static void MX_TIM4_Init(void);
 static void MX_I2C1_Init(void);
+static void MX_TIM1_Init(void);
+static void MX_TIM2_Init(void);
 /* USER CODE BEGIN PFP */
 static void I2C_Scan(void);
 static void Sensor_ReadChipIds(void);
@@ -118,6 +138,8 @@ static void Bench_SetSafeNeutral(void);
 static void Bench_PrintStatus(void);
 static void Bench_PrintHelp(void);
 static void Bench_ProcessCommand(void);
+static void Bench_PrintOdometry(void);
+static void Odometry_Update(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -594,6 +616,56 @@ static void Bench_PrintStatus(void)
     }
 }
 
+static void Odometry_Update(void)
+{
+    float left_m = encoder_left.distance_m;
+    float right_m = encoder_right.distance_m;
+    float dL = left_m - odom_last_left_m;
+    float dR = right_m - odom_last_right_m;
+    float ds;
+    float dtheta;
+    float theta_mid;
+
+    odom_last_left_m = left_m;
+    odom_last_right_m = right_m;
+    robot_v_mps = (encoder_left.speed_mps + encoder_right.speed_mps) * 0.5f;
+    robot_omega_rad_s = (encoder_right.speed_mps - encoder_left.speed_mps) /
+                        ODOM_TRACK_WIDTH_M;
+    if (dL == 0.0f && dR == 0.0f)
+        return;
+
+    ds = (dL + dR) * 0.5f;
+    dtheta = (dR - dL) / ODOM_TRACK_WIDTH_M;
+    theta_mid = robot_theta_rad + dtheta * 0.5f;
+    robot_x_m += ds * cosf(theta_mid);
+    robot_y_m += ds * sinf(theta_mid);
+    robot_theta_total_deg += dtheta * 180.0f / ODOM_PI_F;
+    robot_theta_rad += dtheta;
+    while (robot_theta_rad > ODOM_PI_F)
+        robot_theta_rad -= 2.0f * ODOM_PI_F;
+    while (robot_theta_rad <= -ODOM_PI_F)
+        robot_theta_rad += 2.0f * ODOM_PI_F;
+    robot_theta_deg = robot_theta_rad * 180.0f / ODOM_PI_F;
+}
+
+static void Bench_PrintOdometry(void)
+{
+    char message[180];
+    int message_length = snprintf(
+        message, sizeof(message),
+        "ODOM L_MMPS=%ld R_MMPS=%ld L_MM=%ld R_MM=%ld X_MM=%ld Y_MM=%ld HEADING_CDEG=%ld TOTAL_CDEG=%ld\r\n",
+        (long)(encoder_left.speed_mps * 1000.0f),
+        (long)(encoder_right.speed_mps * 1000.0f),
+        (long)(encoder_left.distance_m * 1000.0f),
+        (long)(encoder_right.distance_m * 1000.0f),
+        (long)(robot_x_m * 1000.0f),
+        (long)(robot_y_m * 1000.0f),
+        (long)(robot_theta_deg * 100.0f),
+        (long)(robot_theta_total_deg * 100.0f));
+    if ((message_length > 0) && (message_length < (int)sizeof(message)))
+        UART_SendString(message);
+}
+
 static void Bench_PrintHelp(void)
 {
     UART_SendString(
@@ -604,6 +676,7 @@ static void Bench_PrintHelp(void)
         "CENTER          ESC and servo to 1500 us, disarm\r\n"
         "STOP            same as CENTER; always accepted\r\n"
         "STATUS           print current state\r\n"
+        "ODOM             print wheel speeds and odometry\r\n"
         "STREAM ON|OFF    enable or mute IMU messages\r\n"
         "HELP             print this list\r\n"
         "Timeout: outputs return to 1500 us after 3000 ms.\r\n");
@@ -636,6 +709,10 @@ static void Bench_ProcessCommand(void)
     else if (strcmp(cmd, "STATUS") == 0)
     {
         Bench_PrintStatus();
+    }
+    else if (strcmp(cmd, "ODOM") == 0)
+    {
+        Bench_PrintOdometry();
     }
     else if ((strcmp(cmd, "STOP") == 0) || (strcmp(cmd, "CENTER") == 0))
     {
@@ -778,7 +855,17 @@ int main(void)
   MX_TIM3_Init();
   MX_TIM4_Init();
   MX_I2C1_Init();
+  MX_TIM1_Init();
+  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
+  if (Encoder_Start(&encoder_left, &htim2, -1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (Encoder_Start(&encoder_right, &htim1, 1) != HAL_OK)
+  {
+    Error_Handler();
+  }
 	if (HAL_UART_Receive_IT(&huart2, &uart_rx_byte, 1U) != HAL_OK)
 	{
     Error_Handler();
@@ -817,6 +904,9 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+    Encoder_Update(&encoder_left);
+    Encoder_Update(&encoder_right);
+    Odometry_Update();
 		if (stop_requested != 0U)
 		{
 			Bench_SetSafeNeutral();
@@ -928,6 +1018,66 @@ static void MX_I2C1_Init(void)
 
   /* USER CODE END I2C1_Init 2 */
 
+}
+
+/**
+  * @brief TIM1 Initialization Function (right encoder, PA8/PA9)
+  * @param None
+  * @retval None
+  */
+static void MX_TIM1_Init(void)
+{
+  TIM_Encoder_InitTypeDef sConfig = {0};
+
+  htim1.Instance = TIM1;
+  htim1.Init.Prescaler = 0;
+  htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim1.Init.Period = 65535;
+  htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  sConfig.EncoderMode = TIM_ENCODERMODE_TI12;
+  sConfig.IC1Polarity = TIM_ICPOLARITY_RISING;
+  sConfig.IC1Selection = TIM_ICSELECTION_DIRECTTI;
+  sConfig.IC1Prescaler = TIM_ICPSC_DIV1;
+  sConfig.IC1Filter = 0;
+  sConfig.IC2Polarity = TIM_ICPOLARITY_RISING;
+  sConfig.IC2Selection = TIM_ICSELECTION_DIRECTTI;
+  sConfig.IC2Prescaler = TIM_ICPSC_DIV1;
+  sConfig.IC2Filter = 0;
+  if (HAL_TIM_Encoder_Init(&htim1, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+}
+
+/**
+  * @brief TIM2 Initialization Function (left encoder, PA0/PA1)
+  * @param None
+  * @retval None
+  */
+static void MX_TIM2_Init(void)
+{
+  TIM_Encoder_InitTypeDef sConfig = {0};
+
+  htim2.Instance = TIM2;
+  htim2.Init.Prescaler = 0;
+  htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim2.Init.Period = 65535;
+  htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  sConfig.EncoderMode = TIM_ENCODERMODE_TI12;
+  sConfig.IC1Polarity = TIM_ICPOLARITY_RISING;
+  sConfig.IC1Selection = TIM_ICSELECTION_DIRECTTI;
+  sConfig.IC1Prescaler = TIM_ICPSC_DIV1;
+  sConfig.IC1Filter = 0;
+  sConfig.IC2Polarity = TIM_ICPOLARITY_RISING;
+  sConfig.IC2Selection = TIM_ICSELECTION_DIRECTTI;
+  sConfig.IC2Prescaler = TIM_ICPSC_DIV1;
+  sConfig.IC2Filter = 0;
+  if (HAL_TIM_Encoder_Init(&htim2, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
 }
 
 /**
