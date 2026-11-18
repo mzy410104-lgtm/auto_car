@@ -19,3 +19,13 @@
 /firmware/auto_car/MDK-ARM/auto_car/
 /firmware/auto_car/MDK-ARM/*.uvguix.*
 /firmware/auto_car/MDK-ARM/*.lst
+
+# Local Python virtual environments and macOS metadata.
+.DS_Store
+.venv/
+
+# Unpacked raw 3D source texture packs (converted web textures live in web/public/).
+/dark_rock_4k.blend/
+/door_texture/
+/web/node_modules*/
+/web/.next*/
