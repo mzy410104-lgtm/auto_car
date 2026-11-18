@@ -22,6 +22,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "stdio.h"
+#include "stdlib.h"
+#include "string.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -32,7 +34,13 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 #define ESC_STOP_PULSE_US       1500U
-#define BENCH_TIMEOUT_MS        2000U
+#define SERVO_CENTER_PULSE_US   1500U
+#define ESC_MIN_PULSE_US        1300U
+#define ESC_MAX_PULSE_US        1700U
+#define SERVO_MIN_PULSE_US      1000U
+#define SERVO_MAX_PULSE_US      2000U
+#define MAX_STEP_PULSE_US       50U
+#define BENCH_TIMEOUT_MS        3000U
 
 #define BNO055_I2C_ADDRESS_7BIT  0x28U
 #define BNO055_CHIP_ID_REGISTER  0x00U
@@ -73,7 +81,7 @@ UART_HandleTypeDef huart2;
 static const uint8_t pong_message[] = "PONG\n";
 
 static uint8_t uart_rx_byte = 0U;
-static uint8_t uart_line_buffer[16];
+static uint8_t uart_line_buffer[32];
 static volatile uint8_t uart_line_length = 0U;
 static volatile uint8_t uart_line_ready = 0U;
 static uint32_t last_led_tick = 0U;
@@ -81,6 +89,9 @@ static uint32_t last_led_tick = 0U;
 static volatile uint8_t stop_requested = 0U;
 static uint8_t bench_command_active = 0U;
 static uint32_t last_bench_command_tick = 0U;
+static uint16_t current_esc_us = ESC_STOP_PULSE_US;
+static uint16_t current_servo_us = SERVO_CENTER_PULSE_US;
+static uint8_t imu_stream_enabled = 1U;
 
 static uint32_t last_imu_tick = 0U;
 
@@ -102,6 +113,11 @@ static void BNO055_EnableNDOF(void);
 static void BNO055_PrintEuler(void);
 static void BNO055_PrintCalibration(void);
 static void BNO055_PrintDiagnostics(void);
+static void UART_SendString(const char *str);
+static void Bench_SetSafeNeutral(void);
+static void Bench_PrintStatus(void);
+static void Bench_PrintHelp(void);
+static void Bench_ProcessCommand(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -536,6 +552,197 @@ static void BNO055_PrintCalibration(void)
             100U);
     }
 }
+
+static void UART_SendString(const char *str)
+{
+    if (str != NULL)
+    {
+        (void)HAL_UART_Transmit(
+            &huart2,
+            (uint8_t *)str,
+            (uint16_t)strlen(str),
+            100U);
+    }
+}
+
+static void Bench_SetSafeNeutral(void)
+{
+    current_esc_us = ESC_STOP_PULSE_US;
+    current_servo_us = SERVO_CENTER_PULSE_US;
+    bench_command_active = 0U;
+
+    __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, ESC_STOP_PULSE_US);
+    __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, SERVO_CENTER_PULSE_US);
+}
+
+static void Bench_PrintStatus(void)
+{
+    char message[96];
+    int len = snprintf(
+        message,
+        sizeof(message),
+        "STATUS ARMED=%u ESC_US=%u SERVO_US=%u STREAM=%u TIMEOUT_MS=%u\r\n",
+        (unsigned int)bench_command_active,
+        (unsigned int)current_esc_us,
+        (unsigned int)current_servo_us,
+        (unsigned int)imu_stream_enabled,
+        (unsigned int)BENCH_TIMEOUT_MS);
+
+    if ((len > 0) && (len < (int)sizeof(message)))
+    {
+        (void)HAL_UART_Transmit(&huart2, (uint8_t *)message, (uint16_t)len, 100U);
+    }
+}
+
+static void Bench_PrintHelp(void)
+{
+    UART_SendString(
+        "BENCH COMMANDS:\r\n"
+        "ARM             enable one short test sequence\r\n"
+        "ESC <1300..1700> max 50 us change per command\r\n"
+        "SERVO <1000..2000> max 50 us change per command\r\n"
+        "CENTER          ESC and servo to 1500 us, disarm\r\n"
+        "STOP            same as CENTER; always accepted\r\n"
+        "STATUS           print current state\r\n"
+        "STREAM ON|OFF    enable or mute IMU messages\r\n"
+        "HELP             print this list\r\n"
+        "Timeout: outputs return to 1500 us after 3000 ms.\r\n");
+}
+
+static void Bench_ProcessCommand(void)
+{
+    char cmd[32];
+    uint8_t len = uart_line_length;
+
+    if (len >= sizeof(cmd))
+    {
+        len = (uint8_t)(sizeof(cmd) - 1U);
+    }
+    memcpy(cmd, (const void *)uart_line_buffer, len);
+    cmd[len] = '\0';
+
+    if (strcmp(cmd, "PING") == 0)
+    {
+        (void)HAL_UART_Transmit(
+            &huart2,
+            (uint8_t *)pong_message,
+            (uint16_t)(sizeof(pong_message) - 1U),
+            100U);
+    }
+    else if (strcmp(cmd, "HELP") == 0)
+    {
+        Bench_PrintHelp();
+    }
+    else if (strcmp(cmd, "STATUS") == 0)
+    {
+        Bench_PrintStatus();
+    }
+    else if ((strcmp(cmd, "STOP") == 0) || (strcmp(cmd, "CENTER") == 0))
+    {
+        Bench_SetSafeNeutral();
+        UART_SendString("OK SAFE ESC=1500 SERVO=1500 DISARMED\r\n");
+    }
+    else if (strcmp(cmd, "STREAM ON") == 0)
+    {
+        imu_stream_enabled = 1U;
+        UART_SendString("OK STREAM=1\r\n");
+    }
+    else if (strcmp(cmd, "STREAM OFF") == 0)
+    {
+        imu_stream_enabled = 0U;
+        UART_SendString("OK STREAM=0\r\n");
+    }
+    else if (strcmp(cmd, "ARM") == 0)
+    {
+        if ((current_esc_us != ESC_STOP_PULSE_US) ||
+            (current_servo_us != SERVO_CENTER_PULSE_US))
+        {
+            UART_SendString("ERR CENTER FIRST\r\n");
+        }
+        else
+        {
+            bench_command_active = 1U;
+            last_bench_command_tick = HAL_GetTick();
+            UART_SendString("OK ARMED FOR 3000 ms\r\n");
+        }
+    }
+    else if (strncmp(cmd, "ESC ", 4U) == 0)
+    {
+        char *endptr = NULL;
+        long target = strtol(&cmd[4], &endptr, 10);
+        long diff;
+
+        if (bench_command_active == 0U)
+        {
+            UART_SendString("ERR NOT ARMED\r\n");
+        }
+        else if ((endptr == &cmd[4]) || (*endptr != '\0') ||
+                 (target < (long)ESC_MIN_PULSE_US) ||
+                 (target > (long)ESC_MAX_PULSE_US))
+        {
+            UART_SendString("ERR ESC RANGE 1300..1700\r\n");
+        }
+        else
+        {
+            diff = target - (long)current_esc_us;
+            if (diff < 0L)
+            {
+                diff = -diff;
+            }
+            if (diff > (long)MAX_STEP_PULSE_US)
+            {
+                UART_SendString("ERR ESC STEP MAX 50 us\r\n");
+            }
+            else
+            {
+                current_esc_us = (uint16_t)target;
+                __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, current_esc_us);
+                last_bench_command_tick = HAL_GetTick();
+                Bench_PrintStatus();
+            }
+        }
+    }
+    else if (strncmp(cmd, "SERVO ", 6U) == 0)
+    {
+        char *endptr = NULL;
+        long target = strtol(&cmd[6], &endptr, 10);
+        long diff;
+
+        if (bench_command_active == 0U)
+        {
+            UART_SendString("ERR NOT ARMED\r\n");
+        }
+        else if ((endptr == &cmd[6]) || (*endptr != '\0') ||
+                 (target < (long)SERVO_MIN_PULSE_US) ||
+                 (target > (long)SERVO_MAX_PULSE_US))
+        {
+            UART_SendString("ERR SERVO RANGE 1000..2000\r\n");
+        }
+        else
+        {
+            diff = target - (long)current_servo_us;
+            if (diff < 0L)
+            {
+                diff = -diff;
+            }
+            if (diff > (long)MAX_STEP_PULSE_US)
+            {
+                UART_SendString("ERR SERVO STEP MAX 50 us\r\n");
+            }
+            else
+            {
+                current_servo_us = (uint16_t)target;
+                __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, current_servo_us);
+                last_bench_command_tick = HAL_GetTick();
+                Bench_PrintStatus();
+            }
+        }
+    }
+    else if (len > 0U)
+    {
+        UART_SendString("ERR UNKNOWN; SEND HELP\r\n");
+    }
+}
 /* USER CODE END 0 */
 
 /**
@@ -580,6 +787,11 @@ int main(void)
 	{
     Error_Handler();
 	}
+  __HAL_TIM_SET_COMPARE(
+    &htim3,
+    TIM_CHANNEL_2,
+    SERVO_CENTER_PULSE_US
+  );
 
 	HAL_Delay(700);
 	I2C_Scan();
@@ -607,25 +819,13 @@ int main(void)
     /* USER CODE BEGIN 3 */
 		if (stop_requested != 0U)
 		{
-			__HAL_TIM_SET_COMPARE(
-					&htim4,
-					TIM_CHANNEL_1,
-					ESC_STOP_PULSE_US
-			);
-
-			bench_command_active = 0U;
+			Bench_SetSafeNeutral();
 			stop_requested = 0U;
 		}
 		else if ((bench_command_active != 0U) &&
          ((HAL_GetTick() - last_bench_command_tick) >= BENCH_TIMEOUT_MS))
 		{
-			__HAL_TIM_SET_COMPARE(
-					&htim4,
-					TIM_CHANNEL_1,
-					ESC_STOP_PULSE_US
-			);
-
-			bench_command_active = 0U;
+			Bench_SetSafeNeutral();
 		}
 
 		if ((HAL_GetTick() - last_led_tick) >= 500U)
@@ -633,13 +833,15 @@ int main(void)
 			last_led_tick = HAL_GetTick();
 			HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
 		}
-		if ((HAL_GetTick() - last_imu_tick) >= IMU_OUTPUT_PERIOD_MS)
+		if ((imu_stream_enabled != 0U) &&
+		    ((HAL_GetTick() - last_imu_tick) >= IMU_OUTPUT_PERIOD_MS))
 		{
 			last_imu_tick = HAL_GetTick();
 			BNO055_PrintEuler();
 		}
 
-		if ((HAL_GetTick() - last_calib_tick) >= CALIB_OUTPUT_PERIOD_MS)
+		if ((imu_stream_enabled != 0U) &&
+		    ((HAL_GetTick() - last_calib_tick) >= CALIB_OUTPUT_PERIOD_MS))
 		{
 			last_calib_tick = HAL_GetTick();
 			BNO055_PrintCalibration();
@@ -648,20 +850,7 @@ int main(void)
 
 		if (uart_line_ready != 0U)
 		{
-			if ((uart_line_length == 4U) &&
-					(uart_line_buffer[0] == (uint8_t)'P') &&
-					(uart_line_buffer[1] == (uint8_t)'I') &&
-					(uart_line_buffer[2] == (uint8_t)'N') &&
-					(uart_line_buffer[3] == (uint8_t)'G'))
-			{
-					HAL_UART_Transmit(
-							&huart2,
-							(uint8_t *)pong_message,
-							(uint16_t)(sizeof(pong_message) - 1U),
-							100U
-					);
-			}
-
+			Bench_ProcessCommand();
 			uart_line_length = 0U;
 			uart_line_ready = 0U;
 		}
